@@ -5,16 +5,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Deadlock Hero HUD</title>
   <style>
+    @font-face {
+      font-family: "DeadlockSans";
+      src: url("./fonts/retaildemo-regular.otf") format("opentype");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "DeadlockSans";
+      src: url("./fonts/retaildemo-semibold.otf") format("opentype");
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "DeadlockSans";
+      src: url("./fonts/retaildemo-bold.otf") format("opentype");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "DeadlockText";
+      src: url("./fonts/retailtextdemo-regular.otf") format("opentype");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "DeadlockText";
+      src: url("./fonts/retailtextdemo-bold.otf") format("opentype");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "DeadlockSerif";
+      src: url("./fonts/reaver-semibold.otf") format("opentype");
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "DeadlockSerif";
+      src: url("./fonts/reaver-bold.otf") format("opentype");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
     :root {
-      --bg: #0b1117;
-      --panel: #121b24;
-      --panel-2: #182432;
-      --text: #edf3f8;
-      --muted: #97a8b8;
-      --accent: #25d0a8;
-      --accent-2: #2ea9ff;
-      --danger: #ff5a77;
-      --line: #273545;
+      --bg: #0b0f13;
+      --text: #efe6d5;
+      --muted: #a79a88;
+      --line: rgba(255, 220, 170, 0.15);
+      --weapon-1: #5c3a1f;
+      --weapon-2: #2f2218;
+      --vitality-1: #344124;
+      --vitality-2: #1d2a18;
+      --spirit-1: #4f3546;
+      --spirit-2: #2a202f;
     }
 
     * {
@@ -24,25 +81,25 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-family: "DeadlockSans", "Segoe UI", Tahoma, sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at 10% 10%, #152331 0%, transparent 45%),
-        radial-gradient(circle at 90% 90%, #102035 0%, transparent 45%),
+        radial-gradient(circle at 10% 10%, #26190f 0%, transparent 42%),
+        radial-gradient(circle at 90% 90%, #1d1e2d 0%, transparent 44%),
         var(--bg);
       padding: 1rem;
     }
 
     .container {
-      width: min(1000px, 100%);
+      width: min(1040px, 100%);
       margin: 0 auto;
       display: grid;
       gap: 1rem;
     }
 
     .hero-list {
-      background: rgba(18, 27, 36, 0.9);
-      border: 1px solid var(--line);
+      background: rgba(20, 16, 13, 0.86);
+      border: 1px solid rgba(255, 220, 170, 0.16);
       border-radius: 12px;
       padding: 0.75rem;
       display: flex;
@@ -54,8 +111,8 @@
     }
 
     .hero-btn {
-      border: 1px solid #33465b;
-      background: var(--panel-2);
+      border: 1px solid #6b5a4a;
+      background: rgba(45, 31, 22, 0.9);
       color: var(--text);
       border-radius: 999px;
       padding: 0.45rem 0.8rem;
@@ -65,20 +122,20 @@
     }
 
     .hero-btn:hover {
-      border-color: var(--accent-2);
+      border-color: #f2c37d;
       transform: translateY(-1px);
     }
 
     .hero-btn.active {
-      border-color: var(--accent);
-      background: linear-gradient(135deg, #1f3f48, #1a2f41);
-      box-shadow: 0 0 0 1px rgba(37, 208, 168, 0.2), 0 8px 20px rgba(0, 0, 0, 0.25);
+      border-color: #ffdca8;
+      background: linear-gradient(135deg, #6b4a27, #3f2a1b);
+      box-shadow: 0 0 0 1px rgba(255, 214, 151, 0.2), 0 8px 20px rgba(0, 0, 0, 0.25);
     }
 
     .hud {
-      border: 1px solid var(--line);
+      border: 1px solid rgba(255, 220, 170, 0.12);
       border-radius: 16px;
-      background: linear-gradient(160deg, rgba(18, 27, 36, 0.95), rgba(11, 17, 23, 0.95));
+      background: linear-gradient(165deg, rgba(28, 21, 16, 0.94), rgba(17, 13, 10, 0.96));
       padding: 1rem;
     }
 
@@ -87,7 +144,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 1rem;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 1px solid rgba(255, 220, 170, 0.15);
       padding-bottom: 0.75rem;
       margin-bottom: 0.75rem;
     }
@@ -95,29 +152,33 @@
     .hud-name {
       margin: 0;
       font-size: clamp(1.2rem, 2.5vw, 1.8rem);
-      letter-spacing: 0.02em;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      font-family: "DeadlockSerif", Georgia, serif;
     }
 
     .role-tag {
       display: inline-block;
-      border: 1px solid var(--accent-2);
-      color: #d8efff;
+      border: 1px solid #b9a081;
+      color: #e9d5b4;
       padding: 0.2rem 0.6rem;
       border-radius: 999px;
       font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 0.08em;
+      font-family: "DeadlockText", "Segoe UI", sans-serif;
     }
 
     .description {
       margin: 0.4rem 0 0;
       color: var(--muted);
       line-height: 1.4;
+      font-family: "DeadlockText", "Segoe UI", sans-serif;
     }
 
     .controls {
       margin-top: 1rem;
-      border-top: 1px solid var(--line);
+      border-top: 1px solid rgba(255, 220, 170, 0.15);
       padding-top: 0.9rem;
       display: grid;
       gap: 0.4rem;
@@ -133,7 +194,7 @@
 
     #level-slider {
       width: 100%;
-      accent-color: var(--accent);
+      accent-color: #f0bb73;
       cursor: pointer;
     }
 
@@ -145,28 +206,56 @@
     }
 
     .board {
-      border: 1px solid #5a3e1f;
+      border: 1px solid rgba(255, 224, 176, 0.2);
       border-radius: 10px;
-      background: linear-gradient(160deg, rgba(53, 31, 8, 0.92), rgba(24, 16, 8, 0.95));
       overflow: hidden;
-      box-shadow: inset 0 1px 0 rgba(255, 184, 98, 0.12);
+      position: relative;
+      box-shadow: inset 0 1px 0 rgba(255, 229, 181, 0.16);
+    }
+
+    .board::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(rgba(255, 255, 255, 0.06) 0.7px, transparent 0.8px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.06), transparent 16%);
+      background-size: 4px 4px, 100% 100%;
+      opacity: 0.35;
+    }
+
+    .board.weapon {
+      background: linear-gradient(160deg, color-mix(in srgb, var(--weapon-1) 88%, black), var(--weapon-2));
+    }
+
+    .board.vitality {
+      background: linear-gradient(160deg, color-mix(in srgb, var(--vitality-1) 88%, black), var(--vitality-2));
+    }
+
+    .board.spirit {
+      background: linear-gradient(160deg, color-mix(in srgb, var(--spirit-1) 88%, black), var(--spirit-2));
     }
 
     .board-header {
       display: grid;
       gap: 0.35rem;
       margin: 0;
-      padding: 0.7rem 0.8rem;
-      border-bottom: 1px solid rgba(255, 185, 106, 0.2);
-      background: linear-gradient(90deg, rgba(92, 55, 17, 0.7), rgba(44, 28, 14, 0.7));
+      padding: 0.7rem 0.85rem;
+      border-bottom: 1px solid rgba(255, 220, 170, 0.2);
+      background: rgba(0, 0, 0, 0.18);
+      position: relative;
+      z-index: 1;
     }
 
     .board-kicker {
-      color: #f0c98a;
+      color: #e0d3bd;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: 0.72rem;
-      font-weight: 700;
+      letter-spacing: 0.02em;
+      font-size: 2.1rem;
+      font-weight: 800;
+      line-height: 1;
+      font-family: "DeadlockSerif", Georgia, serif;
     }
 
     .board-title-row {
@@ -178,87 +267,184 @@
 
     .board-title {
       margin: 0;
-      font-size: 1.15rem;
+      font-size: 1.13rem;
       color: #fff5e6;
       line-height: 1.1;
+      font-weight: 800;
+      font-family: "DeadlockSans", "Segoe UI", sans-serif;
     }
 
     .board-summary {
       margin: 0;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #ffd49b;
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: #f7ddbc;
       white-space: nowrap;
+      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+      font-family: "DeadlockSerif", Georgia, serif;
     }
 
     .board-tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.35rem;
+      gap: 0.28rem;
     }
 
     .tag {
-      border: 1px solid rgba(255, 198, 130, 0.35);
+      border: 0;
       color: #f2d8b3;
-      background: rgba(22, 14, 7, 0.45);
+      background: rgba(16, 12, 9, 0.6);
       border-radius: 4px;
-      padding: 0.12rem 0.4rem;
-      font-size: 0.72rem;
-      font-weight: 600;
+      padding: 0.18rem 0.42rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: capitalize;
+      font-family: "DeadlockText", "Segoe UI", sans-serif;
+    }
+
+    .board-body {
+      position: relative;
+      z-index: 1;
+      padding: 0.65rem;
+      display: grid;
+      gap: 0.65rem;
     }
 
     .stat-grid {
       width: 100%;
-      padding: 0.7rem;
       display: grid;
-      grid-template-columns: repeat(2, minmax(120px, 1fr));
-      gap: 0.45rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.2rem;
     }
 
-    .stat-tile {
-      border: 1px solid rgba(255, 195, 128, 0.16);
-      background: rgba(20, 12, 7, 0.45);
-      border-radius: 4px;
-      padding: 0.45rem 0.5rem;
-      min-height: 56px;
-      display: grid;
-      gap: 0.16rem;
-    }
-
-    .stat-line {
+    .stat-row {
+      border: 1px solid rgba(255, 220, 170, 0.12);
+      background: rgba(0, 0, 0, 0.24);
+      border-radius: 2px;
+      padding: 0.42rem 0.52rem;
+      min-height: 42px;
       display: flex;
-      align-items: baseline;
-      gap: 0.35rem;
-      line-height: 1.1;
-      color: #ffe6c5;
+      align-items: center;
+      gap: 0.38rem;
     }
 
-    .stat-now {
-      font-size: 1.03rem;
-      font-weight: 700;
+    .stat-icon {
+      width: 0.9rem;
+      text-align: center;
+      font-size: 0.78rem;
+      line-height: 1;
+      opacity: 0.98;
+    }
+
+    .stat-value {
+      font-size: 1.02rem;
+      font-weight: 800;
       color: #fff6e8;
+      letter-spacing: 0.01em;
+      font-family: "DeadlockSerif", Georgia, serif;
     }
 
-    .stat-label {
+    .stat-name {
       font-size: 0.92rem;
-      font-weight: 600;
-      color: #efd3ab;
+      font-weight: 700;
+      color: #dbccb6;
+      margin-left: 0.05rem;
+      font-family: "DeadlockText", "Segoe UI", sans-serif;
     }
 
-    .stat-meta {
+    .stat-row.zero .stat-value,
+    .stat-row.zero .stat-name {
+      color: #9f9284;
+    }
+
+    .secondary-divider {
+      border-top: 1px solid rgba(255, 220, 170, 0.22);
+      margin: 0.25rem 0 0.1rem;
+      padding-top: 0.5rem;
+    }
+
+    .impact-title {
+      margin: 0;
+      text-transform: uppercase;
+      font-weight: 800;
       font-size: 0.72rem;
-      color: #c4a983;
+      color: #e6d7c1;
       letter-spacing: 0.02em;
+      font-family: "DeadlockSerif", Georgia, serif;
     }
 
-    .stat-tile.scaled {
-      background: linear-gradient(90deg, rgba(122, 70, 18, 0.52), rgba(47, 28, 13, 0.45));
-      border-color: rgba(255, 185, 106, 0.42);
-      box-shadow: inset 0 0 0 1px rgba(255, 202, 142, 0.08);
+    .spirit-impact-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+      gap: 0.38rem;
+      margin-top: 0.32rem;
+    }
+
+    .spirit-power-card {
+      border: 1px solid rgba(207, 158, 255, 0.3);
+      background: rgba(13, 9, 17, 0.44);
+      border-radius: 2px;
+      min-height: 68px;
+      padding: 0.55rem;
+      display: grid;
+      align-content: center;
+      gap: 0.2rem;
+    }
+
+    .spirit-power-main {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: #e9d8ff;
+    }
+
+    .spirit-power-text {
+      font-size: 0.95rem;
+      line-height: 1.24;
+      color: #ddd4e8;
+    }
+
+    .spirit-impact-list {
+      display: grid;
+      gap: 0.22rem;
+    }
+
+    .impact-row {
+      border: 1px solid rgba(255, 220, 170, 0.12);
+      background: rgba(0, 0, 0, 0.24);
+      border-radius: 2px;
+      padding: 0.36rem 0.45rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.6rem;
+      min-height: 31px;
+    }
+
+    .impact-label {
+      color: #d6c9bc;
+      font-size: 0.88rem;
+      font-weight: 700;
+      font-family: "DeadlockText", "Segoe UI", sans-serif;
+    }
+
+    .impact-value {
+      color: #f3e9dc;
+      font-size: 0.92rem;
+      font-weight: 800;
+      min-width: 1.9rem;
+      text-align: right;
+      font-family: "DeadlockSerif", Georgia, serif;
     }
 
     @media (max-width: 640px) {
       .stat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .spirit-impact-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -275,20 +461,16 @@
       }
     }
 
-    .muted {
-      color: var(--muted);
+    .weapon .stat-icon {
+      color: #f4a84c;
     }
 
-    .low {
-      color: #7ed0ff;
+    .vitality .stat-icon {
+      color: #2df2a0;
     }
 
-    .mid {
-      color: #ffd479;
-    }
-
-    .high {
-      color: var(--danger);
+    .spirit .stat-icon {
+      color: #c68cff;
     }
   </style>
 </head>
@@ -314,7 +496,7 @@
       </section>
 
       <section class="boards-grid">
-        <article class="board">
+        <article class="board weapon">
           <header class="board-header">
             <div class="board-kicker">Weapon Stats</div>
             <div class="board-title-row">
@@ -323,27 +505,46 @@
             </div>
             <div id="weapon-tags" class="board-tags"></div>
           </header>
-          <div id="weapon-grid" class="stat-grid"></div>
+          <div class="board-body">
+            <div id="weapon-grid" class="stat-grid"></div>
+            <div id="weapon-secondary-wrap" class="secondary-divider">
+              <div id="weapon-grid-secondary" class="stat-grid"></div>
+            </div>
+          </div>
         </article>
 
-        <article class="board">
+        <article class="board vitality">
           <header class="board-header">
             <div class="board-kicker">Vitality Stats</div>
             <div class="board-title-row">
               <h2 class="board-title">Survivability</h2>
             </div>
           </header>
-          <div id="vitality-grid" class="stat-grid"></div>
+          <div class="board-body">
+            <div id="vitality-grid" class="stat-grid"></div>
+            <div id="vitality-secondary-wrap" class="secondary-divider">
+              <div id="vitality-grid-secondary" class="stat-grid"></div>
+            </div>
+          </div>
         </article>
 
-        <article class="board">
+        <article class="board spirit">
           <header class="board-header">
             <div class="board-kicker">Spirit Stats</div>
             <div class="board-title-row">
               <h2 class="board-title">Ability Scaling</h2>
             </div>
           </header>
-          <div id="spirit-grid" class="stat-grid"></div>
+          <div class="board-body">
+            <div id="spirit-grid" class="stat-grid"></div>
+            <section id="spirit-impact-wrap" class="secondary-divider">
+              <p class="impact-title">Spirit Power Impact</p>
+              <div class="spirit-impact-grid">
+                <div id="spirit-power-card" class="spirit-power-card"></div>
+                <div id="spirit-impact-list" class="spirit-impact-list"></div>
+              </div>
+            </section>
+          </div>
         </article>
       </section>
     </section>
@@ -361,8 +562,15 @@
     const weaponSummaryEl = document.getElementById("weapon-summary");
     const weaponTagsEl = document.getElementById("weapon-tags");
     const weaponGridEl = document.getElementById("weapon-grid");
+    const weaponGridSecondaryEl = document.getElementById("weapon-grid-secondary");
+    const weaponSecondaryWrapEl = document.getElementById("weapon-secondary-wrap");
     const vitalityGridEl = document.getElementById("vitality-grid");
+    const vitalityGridSecondaryEl = document.getElementById("vitality-grid-secondary");
+    const vitalitySecondaryWrapEl = document.getElementById("vitality-secondary-wrap");
     const spiritGridEl = document.getElementById("spirit-grid");
+    const spiritImpactWrapEl = document.getElementById("spirit-impact-wrap");
+    const spiritPowerCardEl = document.getElementById("spirit-power-card");
+    const spiritImpactListEl = document.getElementById("spirit-impact-list");
 
     let activeButton = null;
     let heroIndex = [];
@@ -420,17 +628,76 @@
       return Math.round(value * factor) / factor;
     }
 
+    function compact(value, places = 2) {
+      if (value === null || value === undefined || Number.isNaN(value)) return "-";
+      const fixed = round(value, places).toFixed(places);
+      return fixed.replace(/\.0+$/, "").replace(/(\.\d*?)0+$/, "$1");
+    }
+
     function toMeters(sourceUnits) {
       return sourceUnits / 39.37;
     }
 
     function formatValue(value, statType) {
       if (value === null || value === undefined || Number.isNaN(value)) return "-";
-      if (statType === "EBulletSpeed") return `${round(value, 0)} m/s`;
-      if (statType.includes("Speed") && !statType.includes("BulletSpeedIncrease")) return `${round(value, 2)} m/s`;
-      if (statType.includes("Time") || statType.includes("Cooldown")) return `${round(value, 2)} s`;
-      if (statType.includes("Resist") || statType.includes("BonusScale") || statType.includes("Increase")) return `${round(value, 2)}%`;
-      return `${round(value, 2)}`;
+      if (statType === "EBulletSpeed") return `${compact(value, 0)}m/s`;
+      if (["EMaxMoveSpeed", "ESprintSpeed", "EDashSpeedInMeters"].includes(statType)) return `${compact(value, 1)}m`;
+      if (statType.includes("Time") || statType.includes("Cooldown")) return `${compact(value, 2)}s`;
+      if (
+        statType.includes("Resist") ||
+        statType.includes("BonusScale") ||
+        statType.includes("Increase") ||
+        statType.includes("Reduction") ||
+        statType.includes("Lifesteal") ||
+        statType === "ECritDamageReceivedScale"
+      ) {
+        return `${compact(value, 0)}%`;
+      }
+      if (statType === "ERoundsPerSecond" || statType === "EFireRate") return compact(value, 2);
+      if (statType === "EWeaponDPS" || statType === "EClipSize" || statType.includes("Damage")) return compact(value, 0);
+      return compact(value, 2);
+    }
+
+    function iconForStat(statType) {
+      const iconMap = {
+        EBulletDamage: "✤",
+        ERoundsPerSecond: "≋",
+        EFireRate: "≋",
+        EClipSize: "▥",
+        EReloadTime: "◍",
+        EReloadSpeed: "◍",
+        EBulletSpeed: "➤",
+        EBulletSpeedIncrease: "➤",
+        EBulletLifesteal: "⚗",
+        EBaseWeaponDamageIncrease: "✤",
+        EWeaponDPS: "✹",
+        ELightMeleeDamage: "✊",
+        EHeavyMeleeDamage: "✊",
+        EMaxHealth: "♥",
+        EBaseHealthRegen: "♡",
+        EOOCHealthRegen: "♡",
+        EHealingOutput: "✚",
+        EBulletArmorDamageReduction: "🛡",
+        ETechArmorDamageReduction: "🜂",
+        EMeleeResist: "🛡",
+        EDebuffResist: "◈",
+        ECritDamageReceivedScale: "❣",
+        EMaxMoveSpeed: "◢",
+        ESprintSpeed: "◣",
+        EDashSpeedInMeters: "≋",
+        EStamina: "✣",
+        EStaminaCooldown: "⟳",
+        EStaminaRegenIncrease: "⟲",
+        ETechPower: "✮",
+        ETechCooldown: "◷",
+        ETechDuration: "⌛",
+        ETechRange: "◉",
+        ETechLifesteal: "⚗",
+        EMaxChargesIncrease: "⚡",
+        ETechCooldownBetweenChargeUses: "↺",
+        ECritDamageBonusScale: "❣"
+      };
+      return iconMap[statType] || "•";
     }
 
     function getScalePerLevel(statType, hero, baseValue) {

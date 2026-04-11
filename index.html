@@ -72,6 +72,9 @@
       --vitality-2: #1d2a18;
       --spirit-1: #4f3546;
       --spirit-2: #2a202f;
+      --font-sans: "DeadlockSans";
+      --font-text: "DeadlockText";
+      --font-serif: "DeadlockSerif";
     }
 
     * {
@@ -81,7 +84,7 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: "DeadlockSans", "Segoe UI", Tahoma, sans-serif;
+      font-family: var(--font-sans);
       color: var(--text);
       background:
         radial-gradient(circle at 10% 10%, #26190f 0%, transparent 42%),
@@ -90,8 +93,15 @@
       padding: 1rem;
     }
 
+    button,
+    input,
+    select,
+    textarea {
+      font-family: inherit;
+    }
+
     .container {
-      width: min(1040px, 100%);
+      width: min(1620px, 100%);
       margin: 0 auto;
       display: grid;
       gap: 1rem;
@@ -118,7 +128,7 @@
       padding: 0.45rem 0.8rem;
       cursor: pointer;
       transition: 120ms ease;
-      font-size: 0.95rem;
+      font-size: 1rem;
     }
 
     .hero-btn:hover {
@@ -151,10 +161,10 @@
 
     .hud-name {
       margin: 0;
-      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      font-size: clamp(1.45rem, 3vw, 2.2rem);
       letter-spacing: 0.01em;
       text-transform: uppercase;
-      font-family: "DeadlockSerif", Georgia, serif;
+      font-family: var(--font-serif);
     }
 
     .role-tag {
@@ -163,17 +173,17 @@
       color: #e9d5b4;
       padding: 0.2rem 0.6rem;
       border-radius: 999px;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      font-family: "DeadlockText", "Segoe UI", sans-serif;
+      font-family: var(--font-text);
     }
 
     .description {
       margin: 0.4rem 0 0;
       color: var(--muted);
       line-height: 1.4;
-      font-family: "DeadlockText", "Segoe UI", sans-serif;
+      font-family: var(--font-text);
     }
 
     .controls {
@@ -188,7 +198,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.9rem;
+      font-size: 1rem;
       color: var(--muted);
     }
 
@@ -201,8 +211,8 @@
     .boards-grid {
       margin-top: 1rem;
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.85rem;
+      grid-template-columns: repeat(3, minmax(360px, 1fr));
+      gap: 0.6rem;
     }
 
     .board {
@@ -226,15 +236,15 @@
     }
 
     .board.weapon {
-      background: linear-gradient(160deg, color-mix(in srgb, var(--weapon-1) 88%, black), var(--weapon-2));
+      background: linear-gradient(160deg, #5f3f24, #2f2218);
     }
 
     .board.vitality {
-      background: linear-gradient(160deg, color-mix(in srgb, var(--vitality-1) 88%, black), var(--vitality-2));
+      background: linear-gradient(160deg, #374627, #1d2a18);
     }
 
     .board.spirit {
-      background: linear-gradient(160deg, color-mix(in srgb, var(--spirit-1) 88%, black), var(--spirit-2));
+      background: linear-gradient(160deg, #523748, #2a202f);
     }
 
     .board-header {
@@ -246,16 +256,57 @@
       background: rgba(0, 0, 0, 0.18);
       position: relative;
       z-index: 1;
+      overflow: hidden;
+    }
+
+    .weapon-header-media {
+      position: absolute;
+      top: 0.1rem;
+      right: 0.45rem;
+      width: 60%;
+      height: 5.3rem;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 120ms ease;
+      z-index: 0;
+    }
+
+    .weapon-header-media.visible {
+      opacity: 0.96;
+    }
+
+    .weapon-header-media::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to left, rgba(44, 30, 19, 0.08), rgba(44, 30, 19, 0.84) 45%, rgba(44, 30, 19, 0.95));
+    }
+
+    .weapon-header-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: right center;
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.46));
+      transform: translateX(0.35rem);
+    }
+
+    .board.weapon .board-title-row,
+    .board.weapon .board-tags,
+    .board.weapon .board-kicker {
+      position: relative;
+      z-index: 1;
+      padding-right: 6.2rem;
     }
 
     .board-kicker {
       color: #e0d3bd;
       text-transform: uppercase;
       letter-spacing: 0.02em;
-      font-size: 2.1rem;
+      font-size: 0.84rem;
       font-weight: 800;
       line-height: 1;
-      font-family: "DeadlockSerif", Georgia, serif;
+      font-family: var(--font-serif);
     }
 
     .board-title-row {
@@ -263,25 +314,27 @@
       justify-content: space-between;
       gap: 0.6rem;
       align-items: baseline;
+      flex-wrap: nowrap;
     }
 
     .board-title {
       margin: 0;
-      font-size: 1.13rem;
+      font-size: 1.16rem;
       color: #fff5e6;
       line-height: 1.1;
       font-weight: 800;
-      font-family: "DeadlockSans", "Segoe UI", sans-serif;
+      font-family: var(--font-sans);
+      white-space: nowrap;
     }
 
     .board-summary {
       margin: 0;
-      font-size: 1.02rem;
+      font-size: 1.1rem;
       font-weight: 800;
       color: #f7ddbc;
       white-space: nowrap;
       text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
-      font-family: "DeadlockSerif", Georgia, serif;
+      font-family: var(--font-serif);
     }
 
     .board-tags {
@@ -296,43 +349,55 @@
       background: rgba(16, 12, 9, 0.6);
       border-radius: 4px;
       padding: 0.18rem 0.42rem;
-      font-size: 0.7rem;
+      font-size: 0.78rem;
       font-weight: 700;
       text-transform: capitalize;
-      font-family: "DeadlockText", "Segoe UI", sans-serif;
+      font-family: var(--font-text);
     }
 
     .board-body {
       position: relative;
       z-index: 1;
-      padding: 0.65rem;
+      padding: 0.58rem;
       display: grid;
-      gap: 0.65rem;
+      gap: 0.52rem;
     }
 
     .stat-grid {
       width: 100%;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.2rem;
+      gap: 0.16rem;
     }
 
     .stat-row {
       border: 1px solid rgba(255, 220, 170, 0.12);
       background: rgba(0, 0, 0, 0.24);
       border-radius: 2px;
-      padding: 0.42rem 0.52rem;
-      min-height: 42px;
+      padding: 0.4rem 0.52rem;
+      min-height: 44px;
       display: flex;
       align-items: center;
-      gap: 0.38rem;
+      gap: 0.28rem;
+      overflow: hidden;
     }
 
     .stat-icon {
-      width: 0.9rem;
+      width: 1.05rem;
       text-align: center;
-      font-size: 0.78rem;
+      font-size: 1rem;
       line-height: 1;
+      opacity: 0.98;
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stat-icon-img {
+      width: 1rem;
+      height: 1rem;
+      object-fit: contain;
       opacity: 0.98;
     }
 
@@ -341,15 +406,21 @@
       font-weight: 800;
       color: #fff6e8;
       letter-spacing: 0.01em;
-      font-family: "DeadlockSerif", Georgia, serif;
+      font-family: var(--font-serif);
+      flex: 0 0 auto;
+      white-space: nowrap;
     }
 
     .stat-name {
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 700;
       color: #dbccb6;
-      margin-left: 0.05rem;
-      font-family: "DeadlockText", "Segoe UI", sans-serif;
+      margin-left: 0.02rem;
+      font-family: var(--font-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
     }
 
     .stat-row.zero .stat-value,
@@ -367,10 +438,10 @@
       margin: 0;
       text-transform: uppercase;
       font-weight: 800;
-      font-size: 0.72rem;
+      font-size: 0.82rem;
       color: #e6d7c1;
       letter-spacing: 0.02em;
-      font-family: "DeadlockSerif", Georgia, serif;
+      font-family: var(--font-serif);
     }
 
     .spirit-impact-grid {
@@ -395,14 +466,14 @@
       display: flex;
       align-items: center;
       gap: 0.35rem;
-      font-size: 1.02rem;
+      font-size: 1.12rem;
       font-weight: 800;
       color: #e9d8ff;
     }
 
     .spirit-power-text {
-      font-size: 0.95rem;
-      line-height: 1.24;
+      font-size: 1.04rem;
+      line-height: 1.22;
       color: #ddd4e8;
     }
 
@@ -415,28 +486,31 @@
       border: 1px solid rgba(255, 220, 170, 0.12);
       background: rgba(0, 0, 0, 0.24);
       border-radius: 2px;
-      padding: 0.36rem 0.45rem;
+      padding: 0.44rem 0.52rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 0.6rem;
-      min-height: 31px;
+      min-height: 36px;
     }
 
     .impact-label {
       color: #d6c9bc;
-      font-size: 0.88rem;
+      font-size: 0.98rem;
       font-weight: 700;
-      font-family: "DeadlockText", "Segoe UI", sans-serif;
+      font-family: var(--font-text);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.48rem;
     }
 
     .impact-value {
       color: #f3e9dc;
-      font-size: 0.92rem;
+      font-size: 1.02rem;
       font-weight: 800;
       min-width: 1.9rem;
       text-align: right;
-      font-family: "DeadlockSerif", Georgia, serif;
+      font-family: var(--font-serif);
     }
 
     @media (max-width: 640px) {
@@ -449,7 +523,7 @@
       }
     }
 
-    @media (max-width: 1080px) {
+    @media (max-width: 1220px) {
       .boards-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -461,16 +535,22 @@
       }
     }
 
-    .weapon .stat-icon {
-      color: #f4a84c;
+    .impact-icon {
+      width: 1.45rem;
+      height: 1.45rem;
+      border-radius: 999px;
+      background: rgba(228, 221, 223, 0.78);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
     }
 
-    .vitality .stat-icon {
-      color: #2df2a0;
-    }
-
-    .spirit .stat-icon {
-      color: #c68cff;
+    .impact-icon img {
+      width: 0.85rem;
+      height: 0.85rem;
+      object-fit: contain;
+      filter: grayscale(1) contrast(1.15) brightness(0.33);
     }
   </style>
 </head>
@@ -498,6 +578,9 @@
       <section class="boards-grid">
         <article class="board weapon">
           <header class="board-header">
+            <div id="weapon-header-media" class="weapon-header-media">
+              <img id="weapon-image" alt="" />
+            </div>
             <div class="board-kicker">Weapon Stats</div>
             <div class="board-title-row">
               <h2 id="weapon-name" class="board-title">-</h2>
@@ -552,6 +635,7 @@
 
   <script>
     const ASSETS_API = "https://assets.deadlock-api.com/v2";
+    const ICONS_API = "https://assets.deadlock-api.com/v1/icons";
     const heroListEl = document.getElementById("hero-list");
     const heroNameEl = document.getElementById("hero-name");
     const heroDescriptionEl = document.getElementById("hero-description");
@@ -561,6 +645,8 @@
     const weaponNameEl = document.getElementById("weapon-name");
     const weaponSummaryEl = document.getElementById("weapon-summary");
     const weaponTagsEl = document.getElementById("weapon-tags");
+    const weaponHeaderMediaEl = document.getElementById("weapon-header-media");
+    const weaponImageEl = document.getElementById("weapon-image");
     const weaponGridEl = document.getElementById("weapon-grid");
     const weaponGridSecondaryEl = document.getElementById("weapon-grid-secondary");
     const weaponSecondaryWrapEl = document.getElementById("weapon-secondary-wrap");
@@ -576,10 +662,11 @@
     let heroIndex = [];
     const fullHeroCache = new Map();
     const weaponCache = new Map();
+    let iconsIndex = {};
     let currentModel = null;
 
     const STAT_LABELS = {
-      EMaxHealth: "Health",
+      EMaxHealth: "Max Health",
       EBaseHealthRegen: "Health Regen",
       EBulletArmorDamageReduction: "Bullet Resist",
       ETechArmorDamageReduction: "Spirit Resist",
@@ -587,35 +674,91 @@
       ESprintSpeed: "Sprint Speed",
       EStamina: "Stamina",
       EBulletDamage: "Bullet Damage",
-      ERoundsPerSecond: "Bullets / sec",
+      ERoundsPerSecond: "Bullets per sec",
       EFireRate: "Fire Rate",
       EClipSize: "Ammo",
       EReloadTime: "Reload Time",
-      EReloadSpeed: "Reload Speed",
+      EReloadSpeed: "Reload Reduction",
       EBulletSpeed: "Bullet Velocity",
       EWeaponDPS: "Damage / sec",
       ELightMeleeDamage: "Light Melee",
       EHeavyMeleeDamage: "Heavy Melee",
       ETechPower: "Spirit Power",
-      ETechRange: "Spirit Range",
-      ETechDuration: "Spirit Duration",
-      ETechCooldown: "Cooldown Reduction",
+      ETechRange: "Ability Range",
+      ETechDuration: "Ability Duration",
+      ETechCooldown: "Ability Cooldown",
       ETechLifesteal: "Spirit Lifesteal",
-      EMaxChargesIncrease: "Max Charges",
+      EMaxChargesIncrease: "Max Charges Increase",
       ETechCooldownBetweenChargeUses: "Charge Cooldown",
-      EHealingOutput: "Healing Output",
-      EOOCHealthRegen: "Out of Combat Regen",
+      EHealingOutput: "Heal Amp",
+      EOOCHealthRegen: "Non-Combat Regen",
       EMeleeResist: "Melee Resist",
       EDebuffResist: "Debuff Resist",
-      ECritDamageReceivedScale: "Crit Damage Taken",
-      EBaseWeaponDamageIncrease: "Weapon Damage %",
-      EBulletSpeedIncrease: "Bullet Speed %",
+      ECritDamageReceivedScale: "Crit Reduction",
+      EBaseWeaponDamageIncrease: "Weapon Damage",
+      EBulletSpeedIncrease: "Bullet Velocity Increase",
       EBulletLifesteal: "Bullet Lifesteal",
-      ECritDamageBonusScale: "Crit Damage Bonus",
-      EClipSizeIncrease: "Ammo Bonus",
+      ECritDamageBonusScale: "Crit Bonus Scale",
+      EClipSizeIncrease: "Clip Size Increase",
       EDashSpeedInMeters: "Dash Speed",
       EStaminaCooldown: "Stamina Cooldown",
-      EStaminaRegenIncrease: "Stamina Regen Increase"
+      EStaminaRegenIncrease: "Stamina Recovery"
+    };
+
+    const STAT_ICON_KEYS = {
+      EBulletDamage: ["damage_bullet_color"],
+      EBaseWeaponDamageIncrease: ["damage_bullet_color"],
+      ERoundsPerSecond: ["icon_speed"],
+      EFireRate: ["icon_speed"],
+      EClipSize: ["ammo_clip_size"],
+      EClipSizeIncrease: ["ammo_clip_size"],
+      EReloadTime: ["ammo_reload"],
+      EReloadSpeed: ["ammo_reload"],
+      EBulletSpeed: ["bullet_velocity"],
+      EBulletSpeedIncrease: ["bullet_velocity"],
+      EBulletLifesteal: ["health_stealing_bullets_color"],
+      ECritDamageBonusScale: ["damage_crit_color"],
+      ELightMeleeDamage: ["damage_melee_color"],
+      EHeavyMeleeDamage: ["damage_melee_color"],
+      EWeaponDPS: ["damage_bullet_color"],
+      EMaxHealth: ["health"],
+      EBaseHealthRegen: ["health_rege"],
+      EOOCHealthRegen: ["health_rege"],
+      EHealingOutput: ["icon_add"],
+      EBulletArmorDamageReduction: ["resist_bullet_color"],
+      ETechArmorDamageReduction: ["resist_spirit_color"],
+      EMeleeResist: ["resist_melee_color"],
+      EDebuffResist: ["debuff_remove"],
+      ECritDamageReceivedScale: ["damage_crit_color"],
+      EMaxMoveSpeed: ["move_speed"],
+      ESprintSpeed: ["move_sprint"],
+      EDashSpeedInMeters: ["move_dash"],
+      EStamina: ["move_stamina"],
+      EStaminaCooldown: ["move_stamina_recharge"],
+      EStaminaRegenIncrease: ["move_stamina_recharge"],
+      ETechPower: ["citadel_build_tag_spirit"],
+      ETechCooldown: ["cooldow"],
+      ETechDuration: ["duratio"],
+      ETechRange: ["range"],
+      ETechLifesteal: ["health_stealing_spirit_color"],
+      EMaxChargesIncrease: ["charge"],
+      ETechCooldownBetweenChargeUses: ["property_charge_cooldow"]
+    };
+
+    const COLOR_ICON_OVERRIDES = {
+      damage_bullet: "damage_bullet_color",
+      icon_damage_bullet: "damage_bullet_color",
+      damage_melee: "damage_melee_color",
+      damage_crit: "damage_crit_color",
+      resist_bullet: "resist_bullet_color",
+      resist_melee: "resist_melee_color",
+      resist_spirit: "resist_spirit_color",
+      armor_bullet: "armor_bullet_color",
+      armor_melee: "armor_melee_color",
+      armor_spirit: "armor_spirit_color",
+      health_stealing_bullets: "health_stealing_bullets_color",
+      health_stealing_melee: "health_stealing_melee_color",
+      health_stealing_spirit: "health_stealing_spirit_color"
     };
 
     function asNumber(value) {
@@ -632,6 +775,39 @@
       if (value === null || value === undefined || Number.isNaN(value)) return "-";
       const fixed = round(value, places).toFixed(places);
       return fixed.replace(/\.0+$/, "").replace(/(\.\d*?)0+$/, "$1");
+    }
+
+    function toTitle(value) {
+      return String(value || "")
+        .replace(/[_-]+/g, " ")
+        .trim()
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+    }
+
+    function getReadableWeaponName(hero, weapon) {
+      const rawName = String(weapon?.name || "").trim();
+      const className = String(weapon?.class_name || "").trim();
+      const looksInternal = !rawName || rawName === className || /^citadel_/i.test(rawName);
+      if (!looksInternal) return rawName;
+
+      const gunTag = String(hero?.gun_tag || "").trim();
+      if (gunTag) return `${hero.name}'s ${toTitle(gunTag)}`;
+
+      const cleaned = className
+        .replace(/^citadel_weapon_/i, "")
+        .replace(/_set$/i, "")
+        .replace(/^hero_/i, "");
+      return toTitle(cleaned || "Primary Weapon");
+    }
+
+    function getWeaponDisplayImage(hero, weapon) {
+      return (
+        hero?.shop_stat_display?.weapon_stats_display?.weapon_image_webp ||
+        hero?.shop_stat_display?.weapon_stats_display?.weapon_image ||
+        weapon?.image_webp ||
+        weapon?.image ||
+        ""
+      );
     }
 
     function toMeters(sourceUnits) {
@@ -658,46 +834,42 @@
       return compact(value, 2);
     }
 
-    function iconForStat(statType) {
-      const iconMap = {
-        EBulletDamage: "✤",
-        ERoundsPerSecond: "≋",
-        EFireRate: "≋",
-        EClipSize: "▥",
-        EReloadTime: "◍",
-        EReloadSpeed: "◍",
-        EBulletSpeed: "➤",
-        EBulletSpeedIncrease: "➤",
-        EBulletLifesteal: "⚗",
-        EBaseWeaponDamageIncrease: "✤",
-        EWeaponDPS: "✹",
-        ELightMeleeDamage: "✊",
-        EHeavyMeleeDamage: "✊",
-        EMaxHealth: "♥",
-        EBaseHealthRegen: "♡",
-        EOOCHealthRegen: "♡",
-        EHealingOutput: "✚",
-        EBulletArmorDamageReduction: "🛡",
-        ETechArmorDamageReduction: "🜂",
-        EMeleeResist: "🛡",
-        EDebuffResist: "◈",
-        ECritDamageReceivedScale: "❣",
-        EMaxMoveSpeed: "◢",
-        ESprintSpeed: "◣",
-        EDashSpeedInMeters: "≋",
-        EStamina: "✣",
-        EStaminaCooldown: "⟳",
-        EStaminaRegenIncrease: "⟲",
-        ETechPower: "✮",
-        ETechCooldown: "◷",
-        ETechDuration: "⌛",
-        ETechRange: "◉",
-        ETechLifesteal: "⚗",
-        EMaxChargesIncrease: "⚡",
-        ETechCooldownBetweenChargeUses: "↺",
-        ECritDamageBonusScale: "❣"
+    function iconUrlFromKey(iconKey) {
+      if (!iconKey) return "";
+      const raw = String(iconKey).trim();
+      if (!raw) return "";
+
+      const normalizeKey = (key) => {
+        const baseKey = key.replace(/_unfilled$/i, "");
+        if (COLOR_ICON_OVERRIDES[baseKey] && iconsIndex[COLOR_ICON_OVERRIDES[baseKey]]) {
+          return COLOR_ICON_OVERRIDES[baseKey];
+        }
+        if (iconsIndex[baseKey]) return baseKey;
+        if (iconsIndex[key]) return key;
+        return "";
       };
-      return iconMap[statType] || "•";
+
+      const normalized = normalizeKey(raw);
+      return normalized ? iconsIndex[normalized] : "";
+    }
+
+    function iconUrlForStat(statType) {
+      const keys = STAT_ICON_KEYS[statType] || [];
+      for (const key of keys) {
+        const url = iconUrlFromKey(key);
+        if (url) return url;
+      }
+      return iconUrlFromKey("damage_bullet_color") || iconUrlFromKey("icon_damage_bullet") || "";
+    }
+
+    async function loadIconsIndex() {
+      try {
+        const res = await fetch(ICONS_API);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        iconsIndex = await res.json();
+      } catch (error) {
+        iconsIndex = {};
+      }
     }
 
     function getScalePerLevel(statType, hero, baseValue) {
@@ -806,18 +978,65 @@
     function renderStatGrid(container, rows) {
       container.innerHTML = "";
       rows.forEach((row) => {
-        const tile = document.createElement("article");
-        tile.className = `stat-tile ${row.perLevel !== 0 ? "scaled" : ""}`;
-        const perLevelText = row.perLevel === 0 ? "no level scaling" : `+${formatValue(row.perLevel, row.statType)} per level`;
-        tile.innerHTML = `
-          <div class="stat-line">
-            <span class="stat-now">${formatValue(row.current, row.statType)}</span>
-            <span class="stat-label">${row.label}</span>
-          </div>
-          <div class="stat-meta">L1: ${formatValue(row.base, row.statType)} | ${perLevelText}</div>
+        const statRow = document.createElement("article");
+        const isZero = row.current === 0;
+        const iconUrl = iconUrlForStat(row.statType);
+        statRow.className = `stat-row ${isZero ? "zero" : ""}`;
+        statRow.innerHTML = `
+          <span class="stat-icon">${iconUrl ? `<img class="stat-icon-img" src="${iconUrl}" alt="" loading="lazy" />` : ""}</span>
+          <span class="stat-value">${formatValue(row.current, row.statType)}</span>
+          <span class="stat-name">${row.label}</span>
         `;
-        container.appendChild(tile);
+        container.appendChild(statRow);
       });
+    }
+
+    function splitWeaponRows(rows) {
+      const melee = new Set(["ELightMeleeDamage", "EHeavyMeleeDamage"]);
+      return {
+        primary: rows.filter((r) => !melee.has(r.statType)),
+        secondary: rows.filter((r) => melee.has(r.statType))
+      };
+    }
+
+    function splitVitalityRows(rows) {
+      const mobility = new Set([
+        "EMaxMoveSpeed",
+        "ESprintSpeed",
+        "EStaminaCooldown",
+        "EStaminaRegenIncrease",
+        "EStamina",
+        "EDashSpeedInMeters"
+      ]);
+      return {
+        primary: rows.filter((r) => !mobility.has(r.statType)),
+        secondary: rows.filter((r) => mobility.has(r.statType))
+      };
+    }
+
+    function renderSpiritImpact(rows) {
+      const spiritPowerRow = rows.find((row) => row.statType === "ETechPower");
+      const spiritPower = spiritPowerRow?.current ?? 0;
+      const spiritPowerIcon = iconUrlFromKey("citadel_build_tag_spirit") || iconUrlFromKey("keystat_spirit_arrow") || iconUrlFromKey("spirit");
+      spiritPowerCardEl.innerHTML = `
+        <div class="spirit-power-main"><span class="stat-icon">${spiritPowerIcon ? `<img class="stat-icon-img" src="${spiritPowerIcon}" alt="" loading="lazy" />` : ""}</span><span>${formatValue(spiritPower, "ETechPower")} Spirit Power</span></div>
+        <div class="spirit-power-text">Spirit Power increases the effectiveness of your Abilities and Items.</div>
+      `;
+
+      const impactRows = [
+        { label: "Health Steal Per Sec", value: compact(spiritPower * 0.316, 1), iconKey: "health_stealing_spirit_color" },
+        { label: "Damage", value: compact(spiritPower * 2.05, 0), iconKey: "icon_damage_mystic" },
+        { label: "Base Damage", value: compact(spiritPower * 0.65, 0), iconKey: "damage_magic_color" },
+        { label: "Barrier", value: "0", iconKey: "icon_fortitude_shield" }
+      ];
+
+      spiritImpactListEl.innerHTML = impactRows
+        .map((row) => {
+          const iconUrl = iconUrlFromKey(row.iconKey);
+          return `<div class="impact-row"><span class="impact-label">${iconUrl ? `<span class="impact-icon"><img src="${iconUrl}" alt="" loading="lazy" /></span>` : ""} ${row.label}</span><span class="impact-value">${row.value}</span></div>`;
+        })
+        .join("");
+      spiritImpactWrapEl.style.display = "";
     }
 
     function getCategoryStatIds(hero, category) {
@@ -863,9 +1082,19 @@
       const vitalityRows = buildCategoryRows(currentModel.vitalityStatIds, currentModel.hero, currentModel.weapon, level);
       const spiritRows = buildCategoryRows(currentModel.spiritStatIds, currentModel.hero, currentModel.weapon, level);
 
-      renderStatGrid(weaponGridEl, weaponRows);
-      renderStatGrid(vitalityGridEl, vitalityRows);
+      const weaponSplit = splitWeaponRows(weaponRows);
+      const vitalitySplit = splitVitalityRows(vitalityRows);
+
+      renderStatGrid(weaponGridEl, weaponSplit.primary);
+      renderStatGrid(weaponGridSecondaryEl, weaponSplit.secondary);
+      weaponSecondaryWrapEl.style.display = weaponSplit.secondary.length ? "" : "none";
+
+      renderStatGrid(vitalityGridEl, vitalitySplit.primary);
+      renderStatGrid(vitalityGridSecondaryEl, vitalitySplit.secondary);
+      vitalitySecondaryWrapEl.style.display = vitalitySplit.secondary.length ? "" : "none";
+
       renderStatGrid(spiritGridEl, spiritRows);
+      renderSpiritImpact(spiritRows);
     }
 
     async function renderHeroById(heroId) {
@@ -882,11 +1111,21 @@
       heroNameEl.textContent = hero.name;
       heroDescriptionEl.textContent = hero.description?.role || "Starting stat tables";
       heroRoleEl.textContent = hero.hero_type || "Hero";
-      weaponNameEl.textContent = weapon.name || "Primary Weapon";
+      weaponNameEl.textContent = getReadableWeaponName(hero, weapon);
       const dps = formatValue(weapon.weapon_info?.damage_per_second ?? null, "EWeaponDPS");
       const falloffStart = weapon.weapon_info?.damage_falloff_start_range ? round(toMeters(weapon.weapon_info.damage_falloff_start_range), 0) : null;
       const falloffEnd = weapon.weapon_info?.damage_falloff_end_range ? round(toMeters(weapon.weapon_info.damage_falloff_end_range), 0) : null;
       weaponSummaryEl.textContent = `${dps} DPS`;
+      const weaponImage = getWeaponDisplayImage(hero, weapon);
+      if (weaponImage) {
+        weaponImageEl.src = weaponImage;
+        weaponImageEl.alt = `${weaponNameEl.textContent} image`;
+        weaponHeaderMediaEl.classList.add("visible");
+      } else {
+        weaponImageEl.removeAttribute("src");
+        weaponImageEl.alt = "";
+        weaponHeaderMediaEl.classList.remove("visible");
+      }
       weaponTagsEl.innerHTML = "";
       (hero.shop_stat_display?.weapon_stats_display?.weapon_attributes || []).slice(0, 3).forEach((attr) => {
         const tag = document.createElement("span");
@@ -897,7 +1136,7 @@
       if (falloffStart !== null && falloffEnd !== null) {
         const rangeTag = document.createElement("span");
         rangeTag.className = "tag";
-        rangeTag.textContent = `${falloffStart}m -> ${falloffEnd}m`;
+        rangeTag.textContent = `${falloffStart}m → ${falloffEnd}m`;
         weaponTagsEl.appendChild(rangeTag);
       }
       levelSliderEl.value = "1";
@@ -909,11 +1148,18 @@
       heroDescriptionEl.textContent = "";
       heroRoleEl.textContent = "Loading";
       weaponGridEl.innerHTML = "";
+      weaponGridSecondaryEl.innerHTML = "";
       vitalityGridEl.innerHTML = "";
+      vitalityGridSecondaryEl.innerHTML = "";
       spiritGridEl.innerHTML = "";
+      spiritPowerCardEl.innerHTML = "";
+      spiritImpactListEl.innerHTML = "";
       weaponNameEl.textContent = "-";
       weaponSummaryEl.textContent = "-";
       weaponTagsEl.innerHTML = "";
+      weaponImageEl.removeAttribute("src");
+      weaponImageEl.alt = "";
+      weaponHeaderMediaEl.classList.remove("visible");
     }
 
     function setErrorState(message) {
@@ -921,11 +1167,18 @@
       heroDescriptionEl.textContent = message;
       heroRoleEl.textContent = "Error";
       weaponGridEl.innerHTML = "";
+      weaponGridSecondaryEl.innerHTML = "";
       vitalityGridEl.innerHTML = "";
+      vitalityGridSecondaryEl.innerHTML = "";
       spiritGridEl.innerHTML = "";
+      spiritPowerCardEl.innerHTML = "";
+      spiritImpactListEl.innerHTML = "";
       weaponNameEl.textContent = "-";
       weaponSummaryEl.textContent = "-";
       weaponTagsEl.innerHTML = "";
+      weaponImageEl.removeAttribute("src");
+      weaponImageEl.alt = "";
+      weaponHeaderMediaEl.classList.remove("visible");
     }
 
     function buildHeroButtons() {
@@ -977,6 +1230,9 @@
 
     levelSliderEl.addEventListener("input", renderCurrentLevel);
 
+    loadIconsIndex().then(() => {
+      if (currentModel) renderCurrentLevel();
+    });
     loadHeroes();
   </script>
 </body>

@@ -91,6 +91,41 @@
         radial-gradient(circle at 90% 90%, #1d1e2d 0%, transparent 44%),
         var(--bg);
       padding: 1rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .hero-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .hero-bg-layer {
+      position: absolute;
+      inset: 0;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity 480ms ease;
+      transform: scale(1.03);
+    }
+
+    .hero-bg-layer.active {
+      opacity: 1;
+    }
+
+    .hero-bg-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(38, 25, 15, 0.7) 0%, transparent 42%),
+        radial-gradient(circle at 90% 90%, rgba(29, 30, 45, 0.65) 0%, transparent 44%),
+        linear-gradient(180deg, rgba(8, 10, 12, 0.68), rgba(8, 10, 12, 0.8));
+      z-index: 1;
     }
 
     button,
@@ -150,9 +185,7 @@
     }
 
     .hud-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: grid;
       gap: 1rem;
       border-bottom: 1px solid rgba(255, 220, 170, 0.15);
       padding-bottom: 0.75rem;
@@ -167,23 +200,70 @@
       font-family: var(--font-serif);
     }
 
-    .role-tag {
-      display: inline-block;
-      border: 1px solid #b9a081;
-      color: #e9d5b4;
-      padding: 0.2rem 0.6rem;
-      border-radius: 999px;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+    .header-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .boon-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 0.42rem;
+    }
+
+    .boon-item {
+      border: 1px solid rgba(255, 220, 170, 0.18);
+      background: rgba(15, 11, 9, 0.45);
+      border-radius: 6px;
+      padding: 0.38rem 0.48rem;
+      min-height: 52px;
+      display: grid;
+      align-content: center;
+      gap: 0.14rem;
+    }
+
+    .boon-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: #fff1dd;
+      font-family: var(--font-serif);
+      line-height: 1.1;
+    }
+
+    .boon-label {
+      font-size: 0.78rem;
+      color: #ceb999;
+      font-weight: 700;
+      letter-spacing: 0.01em;
       font-family: var(--font-text);
     }
 
-    .description {
-      margin: 0.4rem 0 0;
-      color: var(--muted);
-      line-height: 1.4;
-      font-family: var(--font-text);
+    .boon-inline-icons {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      margin-left: 0.08rem;
+    }
+
+    .boon-inline-icon {
+      width: 0.9rem;
+      height: 0.9rem;
+      object-fit: contain;
+      transform: scale(1.48);
+      transform-origin: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .boon-inline-icon + .boon-inline-icon {
+      margin-left: -0.26rem;
+      z-index: 2;
     }
 
     .controls {
@@ -267,7 +347,7 @@
       height: 5.3rem;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 120ms ease;
+      transition: opacity 220ms ease;
       z-index: 0;
     }
 
@@ -275,20 +355,21 @@
       opacity: 0.96;
     }
 
-    .weapon-header-media::after {
-      content: "";
+    .weapon-image-layer {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to left, rgba(44, 30, 19, 0.08), rgba(44, 30, 19, 0.84) 45%, rgba(44, 30, 19, 0.95));
-    }
-
-    .weapon-header-media img {
       width: 100%;
       height: 100%;
       object-fit: contain;
       object-position: right center;
       filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.46));
       transform: translateX(0.35rem);
+      opacity: 0;
+      transition: opacity 480ms ease;
+    }
+
+    .weapon-image-layer.active {
+      opacity: 1;
     }
 
     .board.weapon .board-title-row,
@@ -383,7 +464,7 @@
     }
 
     .stat-icon {
-      width: 1.05rem;
+      width: 1.55rem;
       text-align: center;
       font-size: 1rem;
       line-height: 1;
@@ -395,10 +476,34 @@
     }
 
     .stat-icon-img {
-      width: 1rem;
-      height: 1rem;
+      width: 1.5rem;
+      height: 1.5rem;
       object-fit: contain;
       opacity: 0.98;
+    }
+
+    .stat-icon-mask {
+      width: 1.5rem;
+      height: 1.5rem;
+      display: inline-block;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      -webkit-mask-size: contain;
+      mask-size: contain;
+    }
+
+    .stat-icon-mask.weapon {
+      background-color: #FF9900;
+    }
+
+    .stat-icon-mask.vitality {
+      background-color: #00FF9A;
+    }
+
+    .stat-icon-mask.spirit {
+      background-color: #CE91FF;
     }
 
     .stat-value {
@@ -411,16 +516,71 @@
       white-space: nowrap;
     }
 
+    .stat-scale {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #ffcb8b;
+      font-family: var(--font-serif);
+      white-space: nowrap;
+      margin-left: 0.12rem;
+      flex: 0 0 auto;
+    }
+
     .stat-name {
       font-size: 0.9rem;
       font-weight: 700;
       color: #dbccb6;
-      margin-left: 0.02rem;
+      margin-left: auto;
       font-family: var(--font-text);
+      min-width: 0;
+      text-align: right;
+      display: inline-flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 0.22rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      min-width: 0;
+    }
+
+    .boon-icons {
+      margin-left: 0.22rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      flex: 0 0 auto;
+    }
+
+    .boon-icon {
+      width: 0.95rem;
+      height: 0.95rem;
+      object-fit: contain;
+      opacity: 0.95;
+      filter: grayscale(0.05) contrast(1.03);
+      transform: scale(1.48);
+      transform-origin: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .boon-icon + .boon-icon {
+      margin-left: -0.28rem;
+      z-index: 2;
+    }
+
+    .boon-icon-fallback {
+      width: 0.95rem;
+      height: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: #f3e7d6;
+      background: rgba(255, 206, 145, 0.34);
+      border: 1px solid rgba(255, 218, 166, 0.35);
+      line-height: 1;
     }
 
     .stat-row.zero .stat-value,
@@ -552,19 +712,25 @@
       object-fit: contain;
       filter: grayscale(1) contrast(1.15) brightness(0.33);
     }
+
+    
   </style>
 </head>
 <body>
-  <main class="container">
+<div class="hero-bg" aria-hidden="true">
+    <div id="hero-bg-a" class="hero-bg-layer active"></div>
+    <div id="hero-bg-b" class="hero-bg-layer"></div>
+    <div class="hero-bg-overlay"></div>
+  </div>
+<main class="container">
     <section id="hero-list" class="hero-list" aria-label="Hero list"></section>
 
     <section class="hud" aria-live="polite">
       <header class="hud-header">
-        <div>
+        <div class="header-main">
           <h1 id="hero-name" class="hud-name"></h1>
-          <p id="hero-description" class="description"></p>
         </div>
-        <span id="hero-role" class="role-tag"></span>
+        <section id="boon-strip" class="boon-strip"></section>
       </header>
 
       <section class="controls">
@@ -579,12 +745,12 @@
         <article class="board weapon">
           <header class="board-header">
             <div id="weapon-header-media" class="weapon-header-media">
-              <img id="weapon-image" alt="" />
+              <img id="weapon-image-a" class="weapon-image-layer active" alt="" />
+              <img id="weapon-image-b" class="weapon-image-layer" alt="" />
             </div>
             <div class="board-kicker">Weapon Stats</div>
             <div class="board-title-row">
               <h2 id="weapon-name" class="board-title">-</h2>
-              <p id="weapon-summary" class="board-summary">-</p>
             </div>
             <div id="weapon-tags" class="board-tags"></div>
           </header>
@@ -638,15 +804,14 @@
     const ICONS_API = "https://assets.deadlock-api.com/v1/icons";
     const heroListEl = document.getElementById("hero-list");
     const heroNameEl = document.getElementById("hero-name");
-    const heroDescriptionEl = document.getElementById("hero-description");
-    const heroRoleEl = document.getElementById("hero-role");
+    const boonStripEl = document.getElementById("boon-strip");
     const levelSliderEl = document.getElementById("level-slider");
     const levelReadoutEl = document.getElementById("level-readout");
     const weaponNameEl = document.getElementById("weapon-name");
-    const weaponSummaryEl = document.getElementById("weapon-summary");
     const weaponTagsEl = document.getElementById("weapon-tags");
     const weaponHeaderMediaEl = document.getElementById("weapon-header-media");
-    const weaponImageEl = document.getElementById("weapon-image");
+    const weaponImageAEl = document.getElementById("weapon-image-a");
+    const weaponImageBEl = document.getElementById("weapon-image-b");
     const weaponGridEl = document.getElementById("weapon-grid");
     const weaponGridSecondaryEl = document.getElementById("weapon-grid-secondary");
     const weaponSecondaryWrapEl = document.getElementById("weapon-secondary-wrap");
@@ -657,13 +822,18 @@
     const spiritImpactWrapEl = document.getElementById("spirit-impact-wrap");
     const spiritPowerCardEl = document.getElementById("spirit-power-card");
     const spiritImpactListEl = document.getElementById("spirit-impact-list");
+    const heroBgAEl = document.getElementById("hero-bg-a");
+    const heroBgBEl = document.getElementById("hero-bg-b");
 
     let activeButton = null;
     let heroIndex = [];
     const fullHeroCache = new Map();
     const weaponCache = new Map();
+    const itemCache = new Map();
     let iconsIndex = {};
     let currentModel = null;
+    let activeBgLayer = "a";
+    let activeWeaponImageLayer = "a";
 
     const STAT_LABELS = {
       EMaxHealth: "Max Health",
@@ -708,41 +878,41 @@
     const STAT_ICON_KEYS = {
       EBulletDamage: ["damage_bullet_color"],
       EBaseWeaponDamageIncrease: ["damage_bullet_color"],
-      ERoundsPerSecond: ["icon_speed"],
-      EFireRate: ["icon_speed"],
+      ERoundsPerSecond: ["fire_rate"],
+      EFireRate: ["fire_rate"],
       EClipSize: ["ammo_clip_size"],
       EClipSizeIncrease: ["ammo_clip_size"],
       EReloadTime: ["ammo_reload"],
       EReloadSpeed: ["ammo_reload"],
       EBulletSpeed: ["bullet_velocity"],
       EBulletSpeedIncrease: ["bullet_velocity"],
-      EBulletLifesteal: ["health_stealing_bullets_color"],
+      EWeaponDPS: ["health_stealing_bullets_color"],
+      ELightMeleeDamage: ["damage_crit_color"],
+      EHeavyMeleeDamage: ["citadel_build_tag_melee"],
+      EBulletLifesteal: ["citadel_build_tag_melee"],
       ECritDamageBonusScale: ["damage_crit_color"],
-      ELightMeleeDamage: ["damage_melee_color"],
-      EHeavyMeleeDamage: ["damage_melee_color"],
-      EWeaponDPS: ["damage_bullet_color"],
       EMaxHealth: ["health"],
       EBaseHealthRegen: ["health_rege"],
-      EOOCHealthRegen: ["health_rege"],
-      EHealingOutput: ["icon_add"],
-      EBulletArmorDamageReduction: ["resist_bullet_color"],
-      ETechArmorDamageReduction: ["resist_spirit_color"],
-      EMeleeResist: ["resist_melee_color"],
+      EOOCHealthRegen: ["healing_booster"],
+      EHealingOutput: ["health_rege"],
+      EBulletArmorDamageReduction: ["armor_bullet_color"],
+      ETechArmorDamageReduction: ["armor_spirit_color"],
+      EMeleeResist: ["armor_melee_color"],
       EDebuffResist: ["debuff_remove"],
       ECritDamageReceivedScale: ["damage_crit_color"],
       EMaxMoveSpeed: ["move_speed"],
       ESprintSpeed: ["move_sprint"],
-      EDashSpeedInMeters: ["move_dash"],
-      EStamina: ["move_stamina"],
-      EStaminaCooldown: ["move_stamina_recharge"],
-      EStaminaRegenIncrease: ["move_stamina_recharge"],
+      EDashSpeedInMeters: ["move_stamina_recharge"],
+      EStamina: ["move_stamina_recharge"],
+      EStaminaCooldown: ["move_stamina"],
+      EStaminaRegenIncrease: ["move_stamina"],
       ETechPower: ["citadel_build_tag_spirit"],
       ETechCooldown: ["cooldow"],
       ETechDuration: ["duratio"],
-      ETechRange: ["range"],
+      ETechRange: ["range_aoe"],
       ETechLifesteal: ["health_stealing_spirit_color"],
       EMaxChargesIncrease: ["charge"],
-      ETechCooldownBetweenChargeUses: ["property_charge_cooldow"]
+      ETechCooldownBetweenChargeUses: ["recharge"]
     };
 
     const COLOR_ICON_OVERRIDES = {
@@ -784,14 +954,25 @@
         .replace(/\b\w/g, (char) => char.toUpperCase());
     }
 
+    function possessive(name) {
+      const safe = String(name || "").trim();
+      if (!safe) return "";
+      return /s$/i.test(safe) ? `${safe}'` : `${safe}'s`;
+    }
+
+    const WEAPON_NAME_OVERRIDES = {
+      citadel_weapon_bull_set: "Abrams' Shotgun"
+    };
+
     function getReadableWeaponName(hero, weapon) {
       const rawName = String(weapon?.name || "").trim();
       const className = String(weapon?.class_name || "").trim();
+      if (WEAPON_NAME_OVERRIDES[className]) return WEAPON_NAME_OVERRIDES[className];
       const looksInternal = !rawName || rawName === className || /^citadel_/i.test(rawName);
       if (!looksInternal) return rawName;
 
       const gunTag = String(hero?.gun_tag || "").trim();
-      if (gunTag) return `${hero.name}'s ${toTitle(gunTag)}`;
+      if (gunTag) return `${possessive(hero?.name)} ${toTitle(gunTag)}`;
 
       const cleaned = className
         .replace(/^citadel_weapon_/i, "")
@@ -834,23 +1015,22 @@
       return compact(value, 2);
     }
 
-    function iconUrlFromKey(iconKey) {
+    function resolveIconKey(iconKey) {
       if (!iconKey) return "";
       const raw = String(iconKey).trim();
       if (!raw) return "";
+      const baseKey = raw.replace(/_unfilled$/i, "");
+      if (COLOR_ICON_OVERRIDES[baseKey] && iconsIndex[COLOR_ICON_OVERRIDES[baseKey]]) {
+        return COLOR_ICON_OVERRIDES[baseKey];
+      }
+      if (iconsIndex[baseKey]) return baseKey;
+      if (iconsIndex[raw]) return raw;
+      return "";
+    }
 
-      const normalizeKey = (key) => {
-        const baseKey = key.replace(/_unfilled$/i, "");
-        if (COLOR_ICON_OVERRIDES[baseKey] && iconsIndex[COLOR_ICON_OVERRIDES[baseKey]]) {
-          return COLOR_ICON_OVERRIDES[baseKey];
-        }
-        if (iconsIndex[baseKey]) return baseKey;
-        if (iconsIndex[key]) return key;
-        return "";
-      };
-
-      const normalized = normalizeKey(raw);
-      return normalized ? iconsIndex[normalized] : "";
+    function iconUrlFromKey(iconKey) {
+      const resolved = resolveIconKey(iconKey);
+      return resolved ? iconsIndex[resolved] : "";
     }
 
     function iconUrlForStat(statType) {
@@ -859,7 +1039,30 @@
         const url = iconUrlFromKey(key);
         if (url) return url;
       }
-      return iconUrlFromKey("damage_bullet_color") || iconUrlFromKey("icon_damage_bullet") || "";
+      return iconUrlFromKey("damage_bullet_color") || "";
+    }
+
+    function iconDataForStat(statType) {
+      const keys = STAT_ICON_KEYS[statType] || [];
+      for (const key of keys) {
+        const resolved = resolveIconKey(key);
+        if (resolved) return { url: iconsIndex[resolved], key: resolved };
+      }
+      const fallback = resolveIconKey("damage_bullet_color");
+      return fallback ? { url: iconsIndex[fallback], key: fallback } : { url: "", key: "" };
+    }
+
+    function iconNeedsTint(resolvedKey) {
+      return !resolvedKey.includes("_color") && !resolvedKey.startsWith("citadel_build_tag_");
+    }
+
+    function getHeroFaceIconUrl(hero) {
+      return (
+        hero?.images?.icon_image_small_webp ||
+        hero?.images?.icon_image_small ||
+        hero?.icon_image_small ||
+        ""
+      );
     }
 
     async function loadIconsIndex() {
@@ -944,7 +1147,7 @@
         case "EHeavyMeleeDamage":
           return fromStarting("heavy_melee_damage");
         case "ETechPower":
-          return asNumber(hero.standard_level_up_upgrades?.MODIFIER_VALUE_TECH_POWER) ? 0 : 0;
+          return fromStarting("tech_power") || 0;
         case "ETechRange":
           return fromStarting("tech_range");
         case "ETechDuration":
@@ -975,17 +1178,29 @@
       });
     }
 
-    function renderStatGrid(container, rows) {
+    function renderStatGrid(container, rows, category) {
       container.innerHTML = "";
+      const heroFaceIcon = getHeroFaceIconUrl(currentModel?.hero);
+      const boonArrowIcon = iconUrlFromKey("keystat_boon_arrow");
       rows.forEach((row) => {
         const statRow = document.createElement("article");
         const isZero = row.current === 0;
-        const iconUrl = iconUrlForStat(row.statType);
+        const hasBoonScaling = row.perLevel !== 0;
+        const scaleText = hasBoonScaling ? `+${compact(row.perLevel, 2)}` : "";
+        const boonIconsHtml = hasBoonScaling
+          ? `<span class="boon-icons">${boonArrowIcon ? `<img class="boon-icon" src="${boonArrowIcon}" alt="" loading="lazy" />` : `<span class="boon-icon-fallback">^</span>`}${heroFaceIcon ? `<img class="boon-icon" src="${heroFaceIcon}" alt="" loading="lazy" />` : `<span class="boon-icon-fallback">H</span>`}</span>`
+          : "";
+        const { url: iconUrl, key: iconKey } = iconDataForStat(row.statType);
+        const useMaskTint = iconUrl && iconNeedsTint(iconKey);
+        const iconHtml = useMaskTint
+          ? `<span class="stat-icon-mask ${category}" style="-webkit-mask-image:url('${iconUrl}');mask-image:url('${iconUrl}');"></span>`
+          : (iconUrl ? `<img class="stat-icon-img" src="${iconUrl}" alt="" loading="lazy" />` : "");
         statRow.className = `stat-row ${isZero ? "zero" : ""}`;
         statRow.innerHTML = `
-          <span class="stat-icon">${iconUrl ? `<img class="stat-icon-img" src="${iconUrl}" alt="" loading="lazy" />` : ""}</span>
+          <span class="stat-icon">${iconHtml}</span>
           <span class="stat-value">${formatValue(row.current, row.statType)}</span>
-          <span class="stat-name">${row.label}</span>
+          ${hasBoonScaling ? `<span class="stat-scale">${scaleText}</span>` : ""}
+          <span class="stat-name">${row.label}${boonIconsHtml}</span>
         `;
         container.appendChild(statRow);
       });
@@ -1017,26 +1232,86 @@
     function renderSpiritImpact(rows) {
       const spiritPowerRow = rows.find((row) => row.statType === "ETechPower");
       const spiritPower = spiritPowerRow?.current ?? 0;
+      const spiritPerLevel = spiritPowerRow?.perLevel ?? 0;
+      const spiritBase = spiritPowerRow?.base ?? 0;
+      const level = Number(levelSliderEl.value);
+      const gainedFromLevels = spiritPerLevel * (level - 1);
       const spiritPowerIcon = iconUrlFromKey("citadel_build_tag_spirit") || iconUrlFromKey("keystat_spirit_arrow") || iconUrlFromKey("spirit");
       spiritPowerCardEl.innerHTML = `
         <div class="spirit-power-main"><span class="stat-icon">${spiritPowerIcon ? `<img class="stat-icon-img" src="${spiritPowerIcon}" alt="" loading="lazy" />` : ""}</span><span>${formatValue(spiritPower, "ETechPower")} Spirit Power</span></div>
-        <div class="spirit-power-text">Spirit Power increases the effectiveness of your Abilities and Items.</div>
+        <div class="spirit-power-text">Level ${level}: Base ${compact(spiritBase, 2)} + ${compact(spiritPerLevel, 2)}/lvl = +${compact(gainedFromLevels, 2)} from levels.</div>
       `;
 
-      const impactRows = [
-        { label: "Health Steal Per Sec", value: compact(spiritPower * 0.316, 1), iconKey: "health_stealing_spirit_color" },
-        { label: "Damage", value: compact(spiritPower * 2.05, 0), iconKey: "icon_damage_mystic" },
-        { label: "Base Damage", value: compact(spiritPower * 0.65, 0), iconKey: "damage_magic_color" },
-        { label: "Barrier", value: "0", iconKey: "icon_fortitude_shield" }
-      ];
+      const impactRows = (currentModel?.spiritScaleEntries || [])
+        .map((entry) => ({
+          label: `${entry.ability} - ${entry.property}`,
+          value: `${compact(spiritPower * entry.scale, 2)} (${entry.scale >= 0 ? "+" : ""}${compact(spiritPerLevel * entry.scale, 2)}/lvl)`,
+          iconUrl: entry.iconUrl || "",
+          absCurrent: Math.abs(spiritPower * entry.scale)
+        }))
+        .sort((a, b) => b.absCurrent - a.absCurrent);
 
-      spiritImpactListEl.innerHTML = impactRows
-        .map((row) => {
-          const iconUrl = iconUrlFromKey(row.iconKey);
-          return `<div class="impact-row"><span class="impact-label">${iconUrl ? `<span class="impact-icon"><img src="${iconUrl}" alt="" loading="lazy" /></span>` : ""} ${row.label}</span><span class="impact-value">${row.value}</span></div>`;
+      if (!impactRows.length) {
+        spiritImpactListEl.innerHTML = `<div class="impact-row"><span class="impact-label">No hero-specific spirit scaling entries found.</span><span class="impact-value">-</span></div>`;
+      } else {
+        spiritImpactListEl.innerHTML = impactRows
+          .slice(0, 8)
+          .map((row) => `<div class="impact-row"><span class="impact-label">${row.iconUrl ? `<span class="impact-icon"><img src="${row.iconUrl}" alt="" loading="lazy" /></span>` : ""} ${row.label}</span><span class="impact-value">${row.value}</span></div>`)
+          .join("");
+      }
+      spiritImpactWrapEl.style.display = "";
+    }
+
+    function renderBoonStrip(hero) {
+      const scale = hero?.standard_level_up_upgrades || {};
+      const heroFace = getHeroFaceIconUrl(hero);
+      const arrow = iconUrlFromKey("keystat_boon_arrow");
+      const iconTrail = `${heroFace ? `<img class="boon-inline-icon" src="${heroFace}" alt="" loading="lazy" />` : ""}${arrow ? `<img class="boon-inline-icon" src="${arrow}" alt="" loading="lazy" />` : ""}`;
+      const iconHtml = iconTrail ? `<span class="boon-inline-icons">${iconTrail}</span>` : "";
+
+      const boons = [
+        { value: asNumber(scale.MODIFIER_VALUE_BASE_HEALTH_FROM_LEVEL) || 0, label: "Health / Level" },
+        { value: asNumber(scale.MODIFIER_VALUE_BASE_BULLET_DAMAGE_FROM_LEVEL) || 0, label: "Bullet Damage / Level" },
+        { value: asNumber(scale.MODIFIER_VALUE_BASE_MELEE_DAMAGE_FROM_LEVEL) || 0, label: "Melee Damage / Level" },
+        { value: asNumber(scale.MODIFIER_VALUE_TECH_POWER) || 0, label: "Spirit Power / Level" },
+        { value: asNumber(scale.MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST) || 0, label: "Bullet Resist / Level" },
+        { value: asNumber(scale.MODIFIER_VALUE_TECH_ARMOR_DAMAGE_RESIST) || 0, label: "Spirit Resist / Level" }
+      ].filter((entry) => entry.value !== 0);
+
+      if (!boons.length) {
+        boonStripEl.innerHTML = "";
+        return;
+      }
+
+      boonStripEl.innerHTML = boons
+        .map((entry) => {
+          const valueText = `+${compact(entry.value, 2)}`;
+          return `<article class="boon-item"><div class="boon-top">${valueText}${iconHtml}</div><div class="boon-label">${entry.label}</div></article>`;
         })
         .join("");
-      spiritImpactWrapEl.style.display = "";
+    }
+
+    function setWeaponHeaderImage(imageUrl, altText) {
+      if (!imageUrl) {
+        weaponImageAEl.removeAttribute("src");
+        weaponImageBEl.removeAttribute("src");
+        weaponImageAEl.alt = "";
+        weaponImageBEl.alt = "";
+        weaponImageAEl.classList.add("active");
+        weaponImageBEl.classList.remove("active");
+        weaponHeaderMediaEl.classList.remove("visible");
+        activeWeaponImageLayer = "a";
+        return;
+      }
+
+      const nextLayer = activeWeaponImageLayer === "a" ? weaponImageBEl : weaponImageAEl;
+      const prevLayer = activeWeaponImageLayer === "a" ? weaponImageAEl : weaponImageBEl;
+      nextLayer.src = imageUrl;
+      nextLayer.alt = altText;
+      nextLayer.classList.add("active");
+      prevLayer.classList.remove("active");
+      weaponHeaderMediaEl.classList.add("visible");
+      activeWeaponImageLayer = activeWeaponImageLayer === "a" ? "b" : "a";
     }
 
     function getCategoryStatIds(hero, category) {
@@ -1073,6 +1348,36 @@
       return weapon;
     }
 
+    async function fetchItem(itemClassName) {
+      if (!itemClassName) return null;
+      if (itemCache.has(itemClassName)) return itemCache.get(itemClassName);
+      const res = await fetch(`${ASSETS_API}/items/${itemClassName}`);
+      if (!res.ok) return null;
+      const item = await res.json();
+      itemCache.set(itemClassName, item);
+      return item;
+    }
+
+    function collectSpiritScaleEntries(abilities) {
+      const entries = [];
+      abilities.forEach((ability) => {
+        if (!ability || !ability.properties) return;
+        Object.entries(ability.properties).forEach(([propertyKey, property]) => {
+          const scaleFn = property?.scale_function;
+          const scaleType = scaleFn?.specific_stat_scale_type;
+          const statScale = asNumber(scaleFn?.stat_scale);
+          if (scaleType !== "ETechPower" || Number.isNaN(statScale) || statScale === 0) return;
+          entries.push({
+            ability: ability.name || toTitle(String(ability.class_name || "").replace(/^ability_/i, "")),
+            property: property.label || property.postvalue_label || propertyKey,
+            scale: statScale,
+            iconUrl: property.icon || ""
+          });
+        });
+      });
+      return entries;
+    }
+
     function renderCurrentLevel() {
       if (!currentModel) return;
       const level = Number(levelSliderEl.value);
@@ -1085,47 +1390,50 @@
       const weaponSplit = splitWeaponRows(weaponRows);
       const vitalitySplit = splitVitalityRows(vitalityRows);
 
-      renderStatGrid(weaponGridEl, weaponSplit.primary);
-      renderStatGrid(weaponGridSecondaryEl, weaponSplit.secondary);
+      renderStatGrid(weaponGridEl, weaponSplit.primary, "weapon");
+      renderStatGrid(weaponGridSecondaryEl, weaponSplit.secondary, "weapon");
       weaponSecondaryWrapEl.style.display = weaponSplit.secondary.length ? "" : "none";
 
-      renderStatGrid(vitalityGridEl, vitalitySplit.primary);
-      renderStatGrid(vitalityGridSecondaryEl, vitalitySplit.secondary);
+      renderStatGrid(vitalityGridEl, vitalitySplit.primary, "vitality");
+      renderStatGrid(vitalityGridSecondaryEl, vitalitySplit.secondary, "vitality");
       vitalitySecondaryWrapEl.style.display = vitalitySplit.secondary.length ? "" : "none";
 
-      renderStatGrid(spiritGridEl, spiritRows);
+      renderStatGrid(spiritGridEl, spiritRows, "spirit");
       renderSpiritImpact(spiritRows);
     }
 
     async function renderHeroById(heroId) {
       const hero = await fetchHero(heroId);
-      const weapon = await fetchWeapon(hero.items.weapon_primary);
+      const signatureIds = [hero.items?.signature1, hero.items?.signature2, hero.items?.signature3, hero.items?.signature4].filter(Boolean);
+      const [weapon, ...signatureItems] = await Promise.all([
+        fetchWeapon(hero.items.weapon_primary),
+        ...signatureIds.map((id) => fetchItem(id))
+      ]);
       currentModel = {
         hero,
         weapon,
         weaponStatIds: getCategoryStatIds(hero, "weapon"),
         vitalityStatIds: getCategoryStatIds(hero, "vitality"),
-        spiritStatIds: getCategoryStatIds(hero, "spirit")
+        spiritStatIds: getCategoryStatIds(hero, "spirit"),
+        spiritScaleEntries: collectSpiritScaleEntries(signatureItems.filter(Boolean))
       };
 
       heroNameEl.textContent = hero.name;
-      heroDescriptionEl.textContent = hero.description?.role || "Starting stat tables";
-      heroRoleEl.textContent = hero.hero_type || "Hero";
+      renderBoonStrip(hero);
+      const heroBgUrl = hero.images?.background_image_webp || hero.images?.background_image || "";
+      if (heroBgUrl) {
+        const nextLayer = activeBgLayer === "a" ? heroBgBEl : heroBgAEl;
+        const prevLayer = activeBgLayer === "a" ? heroBgAEl : heroBgBEl;
+        nextLayer.style.backgroundImage = `url("${heroBgUrl}")`;
+        nextLayer.classList.add("active");
+        prevLayer.classList.remove("active");
+        activeBgLayer = activeBgLayer === "a" ? "b" : "a";
+      }
       weaponNameEl.textContent = getReadableWeaponName(hero, weapon);
-      const dps = formatValue(weapon.weapon_info?.damage_per_second ?? null, "EWeaponDPS");
       const falloffStart = weapon.weapon_info?.damage_falloff_start_range ? round(toMeters(weapon.weapon_info.damage_falloff_start_range), 0) : null;
       const falloffEnd = weapon.weapon_info?.damage_falloff_end_range ? round(toMeters(weapon.weapon_info.damage_falloff_end_range), 0) : null;
-      weaponSummaryEl.textContent = `${dps} DPS`;
       const weaponImage = getWeaponDisplayImage(hero, weapon);
-      if (weaponImage) {
-        weaponImageEl.src = weaponImage;
-        weaponImageEl.alt = `${weaponNameEl.textContent} image`;
-        weaponHeaderMediaEl.classList.add("visible");
-      } else {
-        weaponImageEl.removeAttribute("src");
-        weaponImageEl.alt = "";
-        weaponHeaderMediaEl.classList.remove("visible");
-      }
+      setWeaponHeaderImage(weaponImage, `${weaponNameEl.textContent} image`);
       weaponTagsEl.innerHTML = "";
       (hero.shop_stat_display?.weapon_stats_display?.weapon_attributes || []).slice(0, 3).forEach((attr) => {
         const tag = document.createElement("span");
@@ -1143,10 +1451,7 @@
       renderCurrentLevel();
     }
 
-    function setLoadingState(text) {
-      heroNameEl.textContent = text;
-      heroDescriptionEl.textContent = "";
-      heroRoleEl.textContent = "Loading";
+    function resetHUD() {
       weaponGridEl.innerHTML = "";
       weaponGridSecondaryEl.innerHTML = "";
       vitalityGridEl.innerHTML = "";
@@ -1155,30 +1460,20 @@
       spiritPowerCardEl.innerHTML = "";
       spiritImpactListEl.innerHTML = "";
       weaponNameEl.textContent = "-";
-      weaponSummaryEl.textContent = "-";
       weaponTagsEl.innerHTML = "";
-      weaponImageEl.removeAttribute("src");
-      weaponImageEl.alt = "";
-      weaponHeaderMediaEl.classList.remove("visible");
+      setWeaponHeaderImage("", "");
+    }
+
+    function setLoadingState(text) {
+      heroNameEl.textContent = text;
+      boonStripEl.innerHTML = "";
+      resetHUD();
     }
 
     function setErrorState(message) {
       heroNameEl.textContent = "Failed to load heroes";
-      heroDescriptionEl.textContent = message;
-      heroRoleEl.textContent = "Error";
-      weaponGridEl.innerHTML = "";
-      weaponGridSecondaryEl.innerHTML = "";
-      vitalityGridEl.innerHTML = "";
-      vitalityGridSecondaryEl.innerHTML = "";
-      spiritGridEl.innerHTML = "";
-      spiritPowerCardEl.innerHTML = "";
-      spiritImpactListEl.innerHTML = "";
-      weaponNameEl.textContent = "-";
-      weaponSummaryEl.textContent = "-";
-      weaponTagsEl.innerHTML = "";
-      weaponImageEl.removeAttribute("src");
-      weaponImageEl.alt = "";
-      weaponHeaderMediaEl.classList.remove("visible");
+      boonStripEl.innerHTML = `<article class="boon-item"><div class="boon-label">${message}</div></article>`;
+      resetHUD();
     }
 
     function buildHeroButtons() {

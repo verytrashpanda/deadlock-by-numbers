@@ -1,47 +1,716 @@
 <!DOCTYPE html>
-<html>
-<body>
-  <button id="loadHeroes">Load heroes</button>
-  <button id="loadHero">Load hero 1</button>
-  <button id="loadItems">Load items for hero 1</button>
-
-  <pre id="out"></pre>
-
-  <script>
-    const out = document.getElementById("out");
-
-    async function api(url) {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return res.json();
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deadlock Hero HUD</title>
+  <style>
+    :root {
+      --bg: #0b1117;
+      --panel: #121b24;
+      --panel-2: #182432;
+      --text: #edf3f8;
+      --muted: #97a8b8;
+      --accent: #25d0a8;
+      --accent-2: #2ea9ff;
+      --danger: #ff5a77;
+      --line: #273545;
     }
 
-    document.getElementById("loadHeroes").onclick = async () => {
-      try {
-        const data = await api("https://assets.deadlock-api.com/v2/heroes");
-        out.textContent = JSON.stringify(data, null, 2);
-      } catch (e) {
-        out.textContent = e.message;
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% 10%, #152331 0%, transparent 45%),
+        radial-gradient(circle at 90% 90%, #102035 0%, transparent 45%),
+        var(--bg);
+      padding: 1rem;
+    }
+
+    .container {
+      width: min(1000px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .hero-list {
+      background: rgba(18, 27, 36, 0.9);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      position: sticky;
+      top: 0.75rem;
+      backdrop-filter: blur(6px);
+    }
+
+    .hero-btn {
+      border: 1px solid #33465b;
+      background: var(--panel-2);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 0.45rem 0.8rem;
+      cursor: pointer;
+      transition: 120ms ease;
+      font-size: 0.95rem;
+    }
+
+    .hero-btn:hover {
+      border-color: var(--accent-2);
+      transform: translateY(-1px);
+    }
+
+    .hero-btn.active {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, #1f3f48, #1a2f41);
+      box-shadow: 0 0 0 1px rgba(37, 208, 168, 0.2), 0 8px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .hud {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: linear-gradient(160deg, rgba(18, 27, 36, 0.95), rgba(11, 17, 23, 0.95));
+      padding: 1rem;
+    }
+
+    .hud-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .hud-name {
+      margin: 0;
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      letter-spacing: 0.02em;
+    }
+
+    .role-tag {
+      display: inline-block;
+      border: 1px solid var(--accent-2);
+      color: #d8efff;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .description {
+      margin: 0.4rem 0 0;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .controls {
+      margin-top: 1rem;
+      border-top: 1px solid var(--line);
+      padding-top: 0.9rem;
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    .level-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    #level-slider {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .boards-grid {
+      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .board {
+      border: 1px solid #5a3e1f;
+      border-radius: 10px;
+      background: linear-gradient(160deg, rgba(53, 31, 8, 0.92), rgba(24, 16, 8, 0.95));
+      overflow: hidden;
+      box-shadow: inset 0 1px 0 rgba(255, 184, 98, 0.12);
+    }
+
+    .board-header {
+      display: grid;
+      gap: 0.35rem;
+      margin: 0;
+      padding: 0.7rem 0.8rem;
+      border-bottom: 1px solid rgba(255, 185, 106, 0.2);
+      background: linear-gradient(90deg, rgba(92, 55, 17, 0.7), rgba(44, 28, 14, 0.7));
+    }
+
+    .board-kicker {
+      color: #f0c98a;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .board-title-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.6rem;
+      align-items: baseline;
+    }
+
+    .board-title {
+      margin: 0;
+      font-size: 1.15rem;
+      color: #fff5e6;
+      line-height: 1.1;
+    }
+
+    .board-summary {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #ffd49b;
+      white-space: nowrap;
+    }
+
+    .board-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .tag {
+      border: 1px solid rgba(255, 198, 130, 0.35);
+      color: #f2d8b3;
+      background: rgba(22, 14, 7, 0.45);
+      border-radius: 4px;
+      padding: 0.12rem 0.4rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .stat-grid {
+      width: 100%;
+      padding: 0.7rem;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(120px, 1fr));
+      gap: 0.45rem;
+    }
+
+    .stat-tile {
+      border: 1px solid rgba(255, 195, 128, 0.16);
+      background: rgba(20, 12, 7, 0.45);
+      border-radius: 4px;
+      padding: 0.45rem 0.5rem;
+      min-height: 56px;
+      display: grid;
+      gap: 0.16rem;
+    }
+
+    .stat-line {
+      display: flex;
+      align-items: baseline;
+      gap: 0.35rem;
+      line-height: 1.1;
+      color: #ffe6c5;
+    }
+
+    .stat-now {
+      font-size: 1.03rem;
+      font-weight: 700;
+      color: #fff6e8;
+    }
+
+    .stat-label {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #efd3ab;
+    }
+
+    .stat-meta {
+      font-size: 0.72rem;
+      color: #c4a983;
+      letter-spacing: 0.02em;
+    }
+
+    .stat-tile.scaled {
+      background: linear-gradient(90deg, rgba(122, 70, 18, 0.52), rgba(47, 28, 13, 0.45));
+      border-color: rgba(255, 185, 106, 0.42);
+      box-shadow: inset 0 0 0 1px rgba(255, 202, 142, 0.08);
+    }
+
+    @media (max-width: 640px) {
+      .stat-grid {
+        grid-template-columns: 1fr;
       }
+    }
+
+    @media (max-width: 1080px) {
+      .boards-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .boards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .low {
+      color: #7ed0ff;
+    }
+
+    .mid {
+      color: #ffd479;
+    }
+
+    .high {
+      color: var(--danger);
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section id="hero-list" class="hero-list" aria-label="Hero list"></section>
+
+    <section class="hud" aria-live="polite">
+      <header class="hud-header">
+        <div>
+          <h1 id="hero-name" class="hud-name"></h1>
+          <p id="hero-description" class="description"></p>
+        </div>
+        <span id="hero-role" class="role-tag"></span>
+      </header>
+
+      <section class="controls">
+        <div class="level-row">
+          <span>Level</span>
+          <strong id="level-readout">1</strong>
+        </div>
+        <input id="level-slider" type="range" min="1" max="36" step="1" value="1" />
+      </section>
+
+      <section class="boards-grid">
+        <article class="board">
+          <header class="board-header">
+            <div class="board-kicker">Weapon Stats</div>
+            <div class="board-title-row">
+              <h2 id="weapon-name" class="board-title">-</h2>
+              <p id="weapon-summary" class="board-summary">-</p>
+            </div>
+            <div id="weapon-tags" class="board-tags"></div>
+          </header>
+          <div id="weapon-grid" class="stat-grid"></div>
+        </article>
+
+        <article class="board">
+          <header class="board-header">
+            <div class="board-kicker">Vitality Stats</div>
+            <div class="board-title-row">
+              <h2 class="board-title">Survivability</h2>
+            </div>
+          </header>
+          <div id="vitality-grid" class="stat-grid"></div>
+        </article>
+
+        <article class="board">
+          <header class="board-header">
+            <div class="board-kicker">Spirit Stats</div>
+            <div class="board-title-row">
+              <h2 class="board-title">Ability Scaling</h2>
+            </div>
+          </header>
+          <div id="spirit-grid" class="stat-grid"></div>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const ASSETS_API = "https://assets.deadlock-api.com/v2";
+    const heroListEl = document.getElementById("hero-list");
+    const heroNameEl = document.getElementById("hero-name");
+    const heroDescriptionEl = document.getElementById("hero-description");
+    const heroRoleEl = document.getElementById("hero-role");
+    const levelSliderEl = document.getElementById("level-slider");
+    const levelReadoutEl = document.getElementById("level-readout");
+    const weaponNameEl = document.getElementById("weapon-name");
+    const weaponSummaryEl = document.getElementById("weapon-summary");
+    const weaponTagsEl = document.getElementById("weapon-tags");
+    const weaponGridEl = document.getElementById("weapon-grid");
+    const vitalityGridEl = document.getElementById("vitality-grid");
+    const spiritGridEl = document.getElementById("spirit-grid");
+
+    let activeButton = null;
+    let heroIndex = [];
+    const fullHeroCache = new Map();
+    const weaponCache = new Map();
+    let currentModel = null;
+
+    const STAT_LABELS = {
+      EMaxHealth: "Health",
+      EBaseHealthRegen: "Health Regen",
+      EBulletArmorDamageReduction: "Bullet Resist",
+      ETechArmorDamageReduction: "Spirit Resist",
+      EMaxMoveSpeed: "Move Speed",
+      ESprintSpeed: "Sprint Speed",
+      EStamina: "Stamina",
+      EBulletDamage: "Bullet Damage",
+      ERoundsPerSecond: "Bullets / sec",
+      EFireRate: "Fire Rate",
+      EClipSize: "Ammo",
+      EReloadTime: "Reload Time",
+      EReloadSpeed: "Reload Speed",
+      EBulletSpeed: "Bullet Velocity",
+      EWeaponDPS: "Damage / sec",
+      ELightMeleeDamage: "Light Melee",
+      EHeavyMeleeDamage: "Heavy Melee",
+      ETechPower: "Spirit Power",
+      ETechRange: "Spirit Range",
+      ETechDuration: "Spirit Duration",
+      ETechCooldown: "Cooldown Reduction",
+      ETechLifesteal: "Spirit Lifesteal",
+      EMaxChargesIncrease: "Max Charges",
+      ETechCooldownBetweenChargeUses: "Charge Cooldown",
+      EHealingOutput: "Healing Output",
+      EOOCHealthRegen: "Out of Combat Regen",
+      EMeleeResist: "Melee Resist",
+      EDebuffResist: "Debuff Resist",
+      ECritDamageReceivedScale: "Crit Damage Taken",
+      EBaseWeaponDamageIncrease: "Weapon Damage %",
+      EBulletSpeedIncrease: "Bullet Speed %",
+      EBulletLifesteal: "Bullet Lifesteal",
+      ECritDamageBonusScale: "Crit Damage Bonus",
+      EClipSizeIncrease: "Ammo Bonus",
+      EDashSpeedInMeters: "Dash Speed",
+      EStaminaCooldown: "Stamina Cooldown",
+      EStaminaRegenIncrease: "Stamina Regen Increase"
     };
 
-    document.getElementById("loadHero").onclick = async () => {
-      try {
-        const data = await api("https://assets.deadlock-api.com/v2/heroes/1");
-        out.textContent = JSON.stringify(data, null, 2);
-      } catch (e) {
-        out.textContent = e.message;
-      }
-    };
+    function asNumber(value) {
+      return typeof value === "number" ? value : Number(value);
+    }
 
-    document.getElementById("loadItems").onclick = async () => {
-      try {
-        const data = await api("https://assets.deadlock-api.com/v2/items/by-hero-id/1?language=english");
-        out.textContent = JSON.stringify(data, null, 2);
-      } catch (e) {
-        out.textContent = e.message;
+    function round(value, places = 2) {
+      if (value === null || value === undefined || Number.isNaN(value)) return null;
+      const factor = 10 ** places;
+      return Math.round(value * factor) / factor;
+    }
+
+    function toMeters(sourceUnits) {
+      return sourceUnits / 39.37;
+    }
+
+    function formatValue(value, statType) {
+      if (value === null || value === undefined || Number.isNaN(value)) return "-";
+      if (statType === "EBulletSpeed") return `${round(value, 0)} m/s`;
+      if (statType.includes("Speed") && !statType.includes("BulletSpeedIncrease")) return `${round(value, 2)} m/s`;
+      if (statType.includes("Time") || statType.includes("Cooldown")) return `${round(value, 2)} s`;
+      if (statType.includes("Resist") || statType.includes("BonusScale") || statType.includes("Increase")) return `${round(value, 2)}%`;
+      return `${round(value, 2)}`;
+    }
+
+    function getScalePerLevel(statType, hero, baseValue) {
+      const scale = hero.standard_level_up_upgrades || {};
+      if (statType === "EMaxHealth") return asNumber(scale.MODIFIER_VALUE_BASE_HEALTH_FROM_LEVEL) || 0;
+      if (statType === "EBulletArmorDamageReduction") return asNumber(scale.MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST) || 0;
+      if (statType === "ETechArmorDamageReduction") return asNumber(scale.MODIFIER_VALUE_TECH_ARMOR_DAMAGE_RESIST) || 0;
+      if (statType === "ETechPower") return asNumber(scale.MODIFIER_VALUE_TECH_POWER) || 0;
+      if (statType === "EBulletDamage") return asNumber(scale.MODIFIER_VALUE_BASE_BULLET_DAMAGE_FROM_LEVEL) || 0;
+      if (statType === "ELightMeleeDamage") return asNumber(scale.MODIFIER_VALUE_BASE_MELEE_DAMAGE_FROM_LEVEL) || 0;
+      if (statType === "EHeavyMeleeDamage") {
+        const lightBase = asNumber(baseValue.lightBase) || 0;
+        const heavyBase = asNumber(baseValue.heavyBase) || 0;
+        const lightScale = asNumber(scale.MODIFIER_VALUE_BASE_MELEE_DAMAGE_FROM_LEVEL) || 0;
+        return lightBase > 0 ? (heavyBase / lightBase) * lightScale : 0;
       }
-    };
+      return 0;
+    }
+
+    function getBaseStatValue(statType, hero, weapon) {
+      const s = hero.starting_stats || {};
+      const w = weapon.weapon_info || {};
+      const fromStarting = (key) => asNumber(s[key]?.value);
+
+      switch (statType) {
+        case "EMaxHealth":
+          return fromStarting("max_health");
+        case "EBaseHealthRegen":
+          return fromStarting("base_health_regen");
+        case "EBulletArmorDamageReduction":
+        case "ETechArmorDamageReduction":
+        case "EHealingOutput":
+        case "EOOCHealthRegen":
+        case "EMeleeResist":
+        case "EDebuffResist":
+        case "ETechLifesteal":
+        case "EMaxChargesIncrease":
+        case "ETechCooldownBetweenChargeUses":
+        case "EBaseWeaponDamageIncrease":
+        case "EBulletSpeedIncrease":
+        case "EBulletLifesteal":
+        case "ECritDamageBonusScale":
+        case "EClipSizeIncrease":
+        case "EStaminaCooldown":
+        case "EStaminaRegenIncrease":
+          return 0;
+        case "EMaxMoveSpeed":
+          return fromStarting("max_move_speed");
+        case "ESprintSpeed":
+          return fromStarting("sprint_speed");
+        case "EStamina":
+          return fromStarting("stamina");
+        case "EDashSpeedInMeters":
+          return 14.3;
+        case "EBulletDamage":
+          return asNumber(w.bullet_damage);
+        case "ERoundsPerSecond":
+        case "EFireRate":
+          return asNumber(w.shots_per_second);
+        case "EClipSize":
+          return asNumber(w.clip_size);
+        case "EReloadTime":
+          return asNumber(w.reload_duration);
+        case "EReloadSpeed":
+          return fromStarting("reload_speed");
+        case "EBulletSpeed":
+          return w.bullet_speed ? toMeters(asNumber(w.bullet_speed)) : null;
+        case "EWeaponDPS":
+          return asNumber(w.damage_per_second);
+        case "ELightMeleeDamage":
+          return fromStarting("light_melee_damage");
+        case "EHeavyMeleeDamage":
+          return fromStarting("heavy_melee_damage");
+        case "ETechPower":
+          return asNumber(hero.standard_level_up_upgrades?.MODIFIER_VALUE_TECH_POWER) ? 0 : 0;
+        case "ETechRange":
+          return fromStarting("tech_range");
+        case "ETechDuration":
+          return fromStarting("tech_duration");
+        case "ETechCooldown":
+          return 0;
+        case "ECritDamageReceivedScale":
+          return fromStarting("crit_damage_received_scale");
+        default:
+          return null;
+      }
+    }
+
+    function buildCategoryRows(statIds, hero, weapon, level) {
+      return statIds.map((statType) => {
+        const lightBase = getBaseStatValue("ELightMeleeDamage", hero, weapon);
+        const heavyBase = getBaseStatValue("EHeavyMeleeDamage", hero, weapon);
+        const base = getBaseStatValue(statType, hero, weapon);
+        const perLevel = getScalePerLevel(statType, hero, { lightBase, heavyBase });
+        const current = base === null ? null : base + perLevel * (level - 1);
+        return {
+          statType,
+          label: STAT_LABELS[statType] || statType,
+          base,
+          current,
+          perLevel
+        };
+      });
+    }
+
+    function renderStatGrid(container, rows) {
+      container.innerHTML = "";
+      rows.forEach((row) => {
+        const tile = document.createElement("article");
+        tile.className = `stat-tile ${row.perLevel !== 0 ? "scaled" : ""}`;
+        const perLevelText = row.perLevel === 0 ? "no level scaling" : `+${formatValue(row.perLevel, row.statType)} per level`;
+        tile.innerHTML = `
+          <div class="stat-line">
+            <span class="stat-now">${formatValue(row.current, row.statType)}</span>
+            <span class="stat-label">${row.label}</span>
+          </div>
+          <div class="stat-meta">L1: ${formatValue(row.base, row.statType)} | ${perLevelText}</div>
+        `;
+        container.appendChild(tile);
+      });
+    }
+
+    function getCategoryStatIds(hero, category) {
+      if (category === "weapon") {
+        return [
+          ...(hero.shop_stat_display?.weapon_stats_display?.display_stats || []),
+          ...(hero.shop_stat_display?.weapon_stats_display?.other_display_stats || [])
+        ];
+      }
+      if (category === "vitality") {
+        return [
+          ...(hero.shop_stat_display?.vitality_stats_display?.display_stats || []),
+          ...(hero.shop_stat_display?.vitality_stats_display?.other_display_stats || [])
+        ];
+      }
+      return [...(hero.shop_stat_display?.spirit_stats_display?.display_stats || [])];
+    }
+
+    async function fetchHero(heroId) {
+      if (fullHeroCache.has(heroId)) return fullHeroCache.get(heroId);
+      const res = await fetch(`${ASSETS_API}/heroes/${heroId}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const hero = await res.json();
+      fullHeroCache.set(heroId, hero);
+      return hero;
+    }
+
+    async function fetchWeapon(weaponClassName) {
+      if (weaponCache.has(weaponClassName)) return weaponCache.get(weaponClassName);
+      const res = await fetch(`${ASSETS_API}/items/${weaponClassName}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const weapon = await res.json();
+      weaponCache.set(weaponClassName, weapon);
+      return weapon;
+    }
+
+    function renderCurrentLevel() {
+      if (!currentModel) return;
+      const level = Number(levelSliderEl.value);
+      levelReadoutEl.textContent = String(level);
+
+      const weaponRows = buildCategoryRows(currentModel.weaponStatIds, currentModel.hero, currentModel.weapon, level);
+      const vitalityRows = buildCategoryRows(currentModel.vitalityStatIds, currentModel.hero, currentModel.weapon, level);
+      const spiritRows = buildCategoryRows(currentModel.spiritStatIds, currentModel.hero, currentModel.weapon, level);
+
+      renderStatGrid(weaponGridEl, weaponRows);
+      renderStatGrid(vitalityGridEl, vitalityRows);
+      renderStatGrid(spiritGridEl, spiritRows);
+    }
+
+    async function renderHeroById(heroId) {
+      const hero = await fetchHero(heroId);
+      const weapon = await fetchWeapon(hero.items.weapon_primary);
+      currentModel = {
+        hero,
+        weapon,
+        weaponStatIds: getCategoryStatIds(hero, "weapon"),
+        vitalityStatIds: getCategoryStatIds(hero, "vitality"),
+        spiritStatIds: getCategoryStatIds(hero, "spirit")
+      };
+
+      heroNameEl.textContent = hero.name;
+      heroDescriptionEl.textContent = hero.description?.role || "Starting stat tables";
+      heroRoleEl.textContent = hero.hero_type || "Hero";
+      weaponNameEl.textContent = weapon.name || "Primary Weapon";
+      const dps = formatValue(weapon.weapon_info?.damage_per_second ?? null, "EWeaponDPS");
+      const falloffStart = weapon.weapon_info?.damage_falloff_start_range ? round(toMeters(weapon.weapon_info.damage_falloff_start_range), 0) : null;
+      const falloffEnd = weapon.weapon_info?.damage_falloff_end_range ? round(toMeters(weapon.weapon_info.damage_falloff_end_range), 0) : null;
+      weaponSummaryEl.textContent = `${dps} DPS`;
+      weaponTagsEl.innerHTML = "";
+      (hero.shop_stat_display?.weapon_stats_display?.weapon_attributes || []).slice(0, 3).forEach((attr) => {
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = String(attr).replace("EWeaponAttribute_", "").replace(/_/g, " ");
+        weaponTagsEl.appendChild(tag);
+      });
+      if (falloffStart !== null && falloffEnd !== null) {
+        const rangeTag = document.createElement("span");
+        rangeTag.className = "tag";
+        rangeTag.textContent = `${falloffStart}m -> ${falloffEnd}m`;
+        weaponTagsEl.appendChild(rangeTag);
+      }
+      levelSliderEl.value = "1";
+      renderCurrentLevel();
+    }
+
+    function setLoadingState(text) {
+      heroNameEl.textContent = text;
+      heroDescriptionEl.textContent = "";
+      heroRoleEl.textContent = "Loading";
+      weaponGridEl.innerHTML = "";
+      vitalityGridEl.innerHTML = "";
+      spiritGridEl.innerHTML = "";
+      weaponNameEl.textContent = "-";
+      weaponSummaryEl.textContent = "-";
+      weaponTagsEl.innerHTML = "";
+    }
+
+    function setErrorState(message) {
+      heroNameEl.textContent = "Failed to load heroes";
+      heroDescriptionEl.textContent = message;
+      heroRoleEl.textContent = "Error";
+      weaponGridEl.innerHTML = "";
+      vitalityGridEl.innerHTML = "";
+      spiritGridEl.innerHTML = "";
+      weaponNameEl.textContent = "-";
+      weaponSummaryEl.textContent = "-";
+      weaponTagsEl.innerHTML = "";
+    }
+
+    function buildHeroButtons() {
+      heroListEl.innerHTML = "";
+      heroIndex.forEach((hero, index) => {
+        const btn = document.createElement("button");
+        btn.className = "hero-btn";
+        btn.type = "button";
+        btn.textContent = hero.name;
+
+        btn.addEventListener("click", async () => {
+          if (activeButton) activeButton.classList.remove("active");
+          btn.classList.add("active");
+          activeButton = btn;
+          await renderHeroById(hero.id);
+        });
+
+        heroListEl.appendChild(btn);
+
+        if (index === 0) {
+          btn.classList.add("active");
+          activeButton = btn;
+        }
+      });
+    }
+
+    async function loadHeroes() {
+      setLoadingState("Loading heroes from Deadlock API...");
+      try {
+        const res = await fetch(`${ASSETS_API}/heroes`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        heroIndex = data
+          .filter((hero) => hero.player_selectable && !hero.disabled)
+          .map((hero) => ({ id: hero.id, name: hero.name }))
+          .sort((a, b) => a.name.localeCompare(b.name));
+
+        if (!heroIndex.length) {
+          setErrorState("The API returned no playable heroes.");
+          return;
+        }
+
+        buildHeroButtons();
+        await renderHeroById(heroIndex[0].id);
+      } catch (error) {
+        setErrorState("Could not load hero stats from Deadlock API.");
+      }
+    }
+
+    levelSliderEl.addEventListener("input", renderCurrentLevel);
+
+    loadHeroes();
   </script>
 </body>
 </html>

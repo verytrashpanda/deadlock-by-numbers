@@ -1,0 +1,1 @@
+This thing is a completely half vibe-coded piece of shit I made to try and learn HTML. It pulls all data from the asset API so it should update itself automatically for patch notes and new heroes. I do want to actually maintain this and make it a useful tool.

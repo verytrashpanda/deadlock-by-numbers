@@ -954,6 +954,237 @@
       transform: translate(10px, -120%);
     }
 
+
+    .stats-section-title {
+      margin: 1rem 0 0.55rem;
+      font-size: 1.26rem;
+      font-family: var(--font-serif);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: #fff1dc;
+    }
+
+    .abilities-section {
+      margin-top: 0.95rem;
+      display: grid;
+      gap: 0.6rem;
+    }
+
+    .abilities-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(280px, 1fr));
+      gap: 0.6rem;
+    }
+
+    .ability-card {
+      border: 1px solid rgba(203, 144, 255, 0.22);
+      background: linear-gradient(160deg, rgba(80, 53, 70, 0.92), rgba(24, 18, 28, 0.97));
+      box-shadow: inset 0 1px 0 rgba(255, 220, 170, 0.12);
+      min-width: 0;
+    }
+
+    .ability-card-header {
+      padding: 0;
+      border-bottom: 0;
+      background: transparent;
+      display: contents;
+      gap: 0;
+    }
+
+    .ability-title-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .ability-icon {
+      width: 2rem;
+      height: 2rem;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.28);
+      flex: 0 0 auto;
+    }
+
+    .ability-title-block {
+      min-width: 0;
+      display: grid;
+      gap: 0.12rem;
+    }
+
+    .ability-title {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.08;
+      color: #fff2e1;
+      font-family: var(--font-serif);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ability-subtitle {
+      font-size: 0.72rem;
+      color: #ccb6db;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      font-weight: 700;
+      font-family: var(--font-text);
+    }
+
+    .ability-tier-controls {
+      display: flex;
+      gap: 0.24rem;
+      flex-wrap: wrap;
+    }
+
+    .ability-tier-btn {
+      border: 1px solid rgba(255, 220, 170, 0.18);
+      background: rgba(12, 9, 14, 0.66);
+      color: #decbe8;
+      padding: 0.22rem 0.42rem;
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+      border-radius: 0;
+      min-width: 2rem;
+    }
+
+    .ability-tier-btn.active {
+      border-color: rgba(206, 145, 255, 0.72);
+      background: rgba(80, 54, 102, 0.98);
+      color: #fff2ff;
+    }
+
+    .ability-card-body {
+      padding: 0.58rem;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.18rem;
+      align-items: start;
+    }
+
+    .ability-stat-row {
+      border: 1px solid rgba(255, 220, 170, 0.1);
+      background: rgba(0, 0, 0, 0.24);
+      padding: 0.42rem 0.5rem;
+      display: grid;
+      gap: 0.18rem;
+    }
+
+    .ability-stat-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.45rem;
+      align-items: baseline;
+    }
+
+    .ability-stat-name {
+      color: #f0e0cf;
+      font-size: 0.86rem;
+      font-weight: 800;
+      font-family: var(--font-text);
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .ability-stat-value {
+      color: #fff5ea;
+      font-size: 0.96rem;
+      font-weight: 800;
+      font-family: var(--font-serif);
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums lining-nums;
+    }
+
+    .ability-stat-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.45rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .ability-scale-badges {
+      display: inline-flex;
+      gap: 0.28rem;
+      flex-wrap: wrap;
+    }
+
+    .ability-scale-badge {
+      border: 1px solid rgba(255, 220, 170, 0.14);
+      background: rgba(17, 13, 20, 0.72);
+      color: #cfbddb;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 0.14rem 0.28rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .ability-scale-badge.spirit {
+      border-color: rgba(206, 145, 255, 0.5);
+      color: #f0dcff;
+      background: rgba(49, 34, 60, 0.9);
+    }
+
+    .ability-stat-source {
+      color: #bdaebd;
+      font-size: 0.68rem;
+      font-weight: 700;
+      font-family: var(--font-text);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .ability-empty {
+      color: #cbb8ca;
+      font-size: 0.84rem;
+      padding: 0.45rem 0.1rem 0.2rem;
+      font-family: var(--font-text);
+    }
+
+    .ability-empty,
+    .ability-card-body > .ability-section-full {
+      grid-column: 1 / -1;
+    }
+
+    .ability-card .board-title {
+      font-size: 1rem;
+    }
+
+    .ability-card .board-header {
+      padding: 0.7rem 0.85rem;
+    }
+
+    .ability-card .board-body {
+      padding: 0.58rem;
+    }
+
+    .ability-card .board-kicker {
+      color: #d9c6e6;
+    }
+
+    @media (max-width: 1380px) {
+      .abilities-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .abilities-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ability-card-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
     
   </style>
 </head>
@@ -989,6 +1220,8 @@
         </div>
         <input id="level-slider" type="range" min="0" max="35" step="1" value="0" />
       </section>
+
+      <h2 class="stats-section-title">Stats</h2>
 
       <section class="boards-grid">
         <article class="board weapon">
@@ -1043,6 +1276,11 @@
             </section>
           </div>
         </article>
+      </section>
+
+      <section class="abilities-section" aria-label="Abilities">
+        <h2 class="stats-section-title">Abilities</h2>
+        <div id="abilities-grid" class="abilities-grid"></div>
       </section>
       </section>
     </section>
@@ -1099,6 +1337,7 @@
     const vitalityGridSecondaryEl = document.getElementById("vitality-grid-secondary");
     const vitalitySecondaryWrapEl = document.getElementById("vitality-secondary-wrap");
     const spiritGridEl = document.getElementById("spirit-grid");
+    const abilitiesGridEl = document.getElementById("abilities-grid");
     const spiritImpactWrapEl = document.getElementById("spirit-impact-wrap");
     const spiritImpactListEl = document.getElementById("spirit-impact-list");
     const heroBgAEl = document.getElementById("hero-bg-a");
@@ -1397,6 +1636,318 @@
     function formatScaledAbilityValue(value, unit) {
       const suffix = unit === null || unit === undefined ? "" : String(unit);
       return `${fullPrecision(value)}${suffix}`;
+    }
+
+    function prettifyAbilityKey(value) {
+      return String(value || "")
+        .replace(/[_-]+/g, " ")
+        .replace(/([a-z])([A-Z])/g, "$1 $2")
+        .trim()
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+    }
+
+    function getAbilityIcon(ability) {
+      return (
+        ability?.image_webp ||
+        ability?.image ||
+        ability?.icon_webp ||
+        ability?.icon ||
+        ""
+      );
+    }
+
+    function getAbilityScaleFunctions(property) {
+      const out = [];
+      if (property?.scale_function) {
+        if (Array.isArray(property.scale_function)) out.push(...property.scale_function);
+        else out.push(property.scale_function);
+      }
+      if (Array.isArray(property?.scale_functions)) out.push(...property.scale_functions);
+      return out.filter(Boolean);
+    }
+
+    function getAbilityPropertyUnit(property, parsedBase) {
+      if (property?.postfix !== undefined && property?.postfix !== null) return String(property.postfix);
+      if (parsedBase?.unit) return parsedBase.unit;
+      if (property?.display_units !== undefined && property?.display_units !== null) return String(property.display_units);
+      return "";
+    }
+
+    function getScaleTypeLabel(scaleFn) {
+      const type = String(scaleFn?.specific_stat_scale_type || "").trim();
+      if (type && STAT_LABELS[type]) return STAT_LABELS[type];
+      if (type) return prettifyAbilityKey(type);
+      const scalingStats = Array.isArray(scaleFn?.scaling_stats) ? scaleFn.scaling_stats : [];
+      if (scalingStats.length) {
+        return scalingStats.map((entry) => STAT_LABELS[entry] || prettifyAbilityKey(entry)).join(", ");
+      }
+      return "Scaling";
+    }
+
+    function resolveAbilityPropertyValue(property, spiritPower, tierBonus = 0) {
+      const parsedBase = parseAbilityBaseValue(property);
+      const scaleFns = getAbilityScaleFunctions(property);
+      let total = parsedBase.value;
+      let hasSpiritScaling = false;
+      let hasOtherScaling = false;
+
+      for (const scaleFn of scaleFns) {
+        const statScale = asNumber(scaleFn?.stat_scale);
+        if (!Number.isFinite(statScale) || statScale === 0) continue;
+        if (isSpiritScalingFunction(scaleFn)) {
+          total += spiritPower * statScale;
+          hasSpiritScaling = true;
+        } else {
+          hasOtherScaling = true;
+        }
+      }
+
+      total += tierBonus;
+
+      return {
+        total,
+        unit: getAbilityPropertyUnit(property, parsedBase),
+        hasSpiritScaling,
+        hasOtherScaling,
+        scaleFns
+      };
+    }
+
+    function normaliseItemRef(value) {
+      if (!value) return "";
+      if (typeof value === "string" || typeof value === "number") return String(value);
+      if (typeof value !== "object") return "";
+      return String(
+        value.class_name ??
+        value.className ??
+        value.item_class_name ??
+        value.itemClassName ??
+        value.item_id ??
+        value.itemId ??
+        value.id ??
+        value.value ??
+        ""
+      );
+    }
+
+    function inferTierFromRef(ref, fallbackTier = 0) {
+      const text = String(ref || "");
+      const m = text.match(/(?:_|)tier[_-]?(\d)|(?:_|)t(\d)|(?:_|)upg(?:rade)?[_-]?(\d)|(?:_|)(\d)$/i);
+      const raw = m ? (m[1] || m[2] || m[3] || m[4]) : "";
+      const tier = Number(raw);
+      return Number.isFinite(tier) && tier >= 1 && tier <= 3 ? tier : fallbackTier;
+    }
+
+    function extractUpgradeRefs(ability) {
+      if (!ability || typeof ability !== "object") return [];
+      const refs = [];
+      const seen = new Set();
+
+      const pushRef = (value, tierHint = 0) => {
+        const ref = normaliseItemRef(value);
+        if (!ref || ref === String(ability.id) || ref === String(ability.class_name || "")) return;
+        const key = `${ref}|${tierHint}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        refs.push({ ref, tierHint: tierHint || inferTierFromRef(ref, 0) });
+      };
+
+      const pushCandidate = (candidate, tierHint = 0) => {
+        if (!candidate) return;
+        if (Array.isArray(candidate)) {
+          candidate.forEach((entry) => pushCandidate(entry, tierHint));
+          return;
+        }
+        if (typeof candidate === "string" || typeof candidate === "number") {
+          pushRef(candidate, tierHint);
+          return;
+        }
+        if (typeof candidate === "object") {
+          const directRef = normaliseItemRef(candidate);
+          if (directRef) pushRef(directRef, candidate.item_tier || candidate.itemTier || tierHint || 0);
+          [candidate.ref, candidate.item, candidate.upgrade, candidate.value].forEach((entry) => pushCandidate(entry, tierHint));
+        }
+      };
+
+      [
+        [ability.upgrades, 0],
+        [ability.ability_upgrades, 0],
+        [ability.abilityUpgrades, 0],
+        [ability.tier_upgrades, 0],
+        [ability.tierUpgrades, 0],
+        [ability.children, 0],
+        [ability.child_items, 0],
+        [ability.childItems, 0],
+        [ability.t1, 1],
+        [ability.t2, 2],
+        [ability.t3, 3],
+        [ability.tier1, 1],
+        [ability.tier2, 2],
+        [ability.tier3, 3]
+      ].forEach(([candidate, tierHint]) => pushCandidate(candidate, tierHint));
+
+      return refs;
+    }
+
+    function mergeAbilityProperty(baseProperty, overrideProperty) {
+      if (!baseProperty) return { ...overrideProperty };
+      if (!overrideProperty) return { ...baseProperty };
+      return {
+        ...baseProperty,
+        ...overrideProperty,
+        scale_function: overrideProperty.scale_function ?? baseProperty.scale_function,
+        scale_functions: overrideProperty.scale_functions ?? baseProperty.scale_functions,
+        value: overrideProperty.value ?? baseProperty.value,
+        postfix: overrideProperty.postfix ?? baseProperty.postfix,
+        label: overrideProperty.label ?? baseProperty.label,
+        postvalue_label: overrideProperty.postvalue_label ?? baseProperty.postvalue_label,
+        display_units: overrideProperty.display_units ?? baseProperty.display_units
+      };
+    }
+
+    function buildAbilityForTier(bundle, tier) {
+      const base = bundle?.base || null;
+      if (!base) return null;
+      const merged = {
+        ...base,
+        properties: { ...(base.properties || {}) }
+      };
+
+      const upgrades = Array.isArray(bundle?.upgrades) ? bundle.upgrades : [];
+      upgrades
+        .filter((upgrade) => Number(upgrade?.tier || 0) >= 1 && Number(upgrade?.tier || 0) <= tier)
+        .sort((a, b) => a.tier - b.tier)
+        .forEach((upgrade) => {
+          Object.entries(upgrade.item?.properties || {}).forEach(([key, property]) => {
+            merged.properties[key] = mergeAbilityProperty(merged.properties[key], property);
+          });
+        });
+
+      return merged;
+    }
+
+    function getSpiritPowerAtDisplayLevel() {
+      if (!currentModel) return 0;
+      const displayLevel = Number(levelSliderEl.value);
+      const level = displayLevel + 1;
+      const spiritRows = buildCategoryRows(currentModel.spiritStatIds, currentModel.hero, currentModel.weapon, level);
+      const spiritPowerRow = spiritRows.find((row) => row.statType === "ETechPower");
+      return spiritPowerRow?.current ?? 0;
+    }
+
+    function normaliseAbilityProperties(ability) {
+      return Object.entries(ability?.properties || {}).map(([key, property]) => ({
+        key,
+        property,
+        label: property?.label || property?.postvalue_label || prettifyAbilityKey(key)
+      }));
+    }
+
+    function renderAbilities() {
+      if (!abilitiesGridEl) return;
+      const abilityBundles = currentModel?.abilityBundles || [];
+      const spiritPower = getSpiritPowerAtDisplayLevel();
+
+      if (!abilityBundles.length) {
+        abilitiesGridEl.innerHTML = `<article class="ability-card"><div class="ability-card-body"><div class="ability-empty">No ability data found.</div></div></article>`;
+        return;
+      }
+
+      abilitiesGridEl.innerHTML = "";
+
+      abilityBundles.forEach((bundle, index) => {
+        const tierState = Number(currentModel.abilityTiers?.[index] || 0);
+        const ability = buildAbilityForTier(bundle, tierState) || bundle?.base;
+        if (!ability) return;
+
+        const card = document.createElement("article");
+        card.className = "board spirit ability-card";
+
+        const properties = normaliseAbilityProperties(ability);
+        const icon = getAbilityIcon(ability);
+        const subtitle = ability?.ability_type ? prettifyAbilityKey(ability.ability_type) : "Signature Ability";
+
+        const visibleRows = properties
+          .map(({ key, property, label }) => {
+            const resolved = resolveAbilityPropertyValue(property, spiritPower, 0);
+            const visibleValue = fullPrecision(resolved.total);
+            const isZeroValue = visibleValue === "0" || visibleValue === "-0";
+            if (isZeroValue && !resolved.hasSpiritScaling && !resolved.hasOtherScaling) {
+              return "";
+            }
+
+            const badges = [];
+            if (resolved.hasSpiritScaling) badges.push(`<span class="ability-scale-badge spirit">Spirit</span>`);
+            if (resolved.hasOtherScaling) badges.push(`<span class="ability-scale-badge">Other Scaling</span>`);
+            if (tierState) badges.push(`<span class="ability-scale-badge">T${tierState}</span>`);
+
+            const scaleMeta = resolved.scaleFns
+              .map((scaleFn) => {
+                const statScale = asNumber(scaleFn?.stat_scale);
+                if (!Number.isFinite(statScale) || statScale === 0) return "";
+                return `${getScaleTypeLabel(scaleFn)} × ${fullPrecision(statScale)}`;
+              })
+              .filter(Boolean)
+              .join(" • ");
+
+            return `
+                <div class="ability-stat-row">
+                  <div class="ability-stat-top">
+                    <span class="ability-stat-name">${label}</span>
+                    <span class="ability-stat-value">${formatScaledAbilityValue(resolved.total, resolved.unit)}</span>
+                  </div>
+                  <div class="ability-stat-meta">
+                    <span class="ability-scale-badges">
+                      ${badges.join("")}
+                    </span>
+                    <span class="ability-stat-source">${scaleMeta || "Base Value"}</span>
+                  </div>
+                </div>
+              `;
+          })
+          .filter(Boolean);
+
+        const rowsHtml = visibleRows.length
+          ? visibleRows.join("")
+          : `<div class="ability-empty ability-section-full">No non-zero properties exposed for this ability.</div>`;
+
+        card.innerHTML = `
+          <header class="board-header">
+            <div class="board-kicker">Ability ${index + 1}</div>
+            <div class="ability-title-row">
+              ${icon ? `<img class="ability-icon" src="${icon}" alt="" loading="lazy" />` : `<div class="ability-icon"></div>`}
+              <div class="ability-title-block">
+                <h3 class="board-title">${ability?.name || prettifyAbilityKey(ability?.class_name || `Ability ${index + 1}`)}</h3>
+                <div class="ability-subtitle">${subtitle}</div>
+              </div>
+            </div>
+            <div class="ability-tier-controls" data-ability-index="${index}">
+              ${[0, 1, 2, 3].map((tier) => `
+                <button class="ability-tier-btn ${tierState === tier ? "active" : ""}" type="button" data-tier="${tier}">
+                  T${tier}
+                </button>
+              `).join("")}
+            </div>
+          </header>
+          <div class="board-body ability-card-body">
+            ${rowsHtml}
+          </div>
+        `;
+
+        abilitiesGridEl.appendChild(card);
+      });
+
+      abilitiesGridEl.querySelectorAll(".ability-tier-controls").forEach((wrap) => {
+        wrap.addEventListener("click", (event) => {
+          const btn = event.target.closest(".ability-tier-btn");
+          if (!btn) return;
+          const abilityIndex = Number(wrap.dataset.abilityIndex);
+          const tier = Number(btn.dataset.tier);
+          if (!currentModel.abilityTiers) currentModel.abilityTiers = [0, 0, 0, 0];
+          currentModel.abilityTiers[abilityIndex] = tier;
+          renderAbilities();
+        });
+      });
     }
 
     function isSpiritScalingFunction(scaleFn) {
@@ -1948,6 +2499,22 @@
       return item;
     }
 
+    async function fetchAbilityBundle(itemRef) {
+      const base = await fetchItem(itemRef);
+      if (!base) return null;
+
+      const refs = extractUpgradeRefs(base);
+      const upgrades = (await Promise.all(refs.map(async ({ ref, tierHint }) => {
+        const item = await fetchItem(ref);
+        if (!item) return null;
+        const tier = Number(item?.item_tier ?? item?.tier ?? tierHint ?? inferTierFromRef(ref, 0));
+        return { ref, tier, item };
+      }))).filter(Boolean);
+
+      upgrades.sort((a, b) => a.tier - b.tier);
+      return { base, upgrades };
+    }
+
     function collectSpiritScaleEntries(abilities) {
       const entries = [];
       const seen = new Set();
@@ -2012,22 +2579,29 @@
 
       renderStatGrid(spiritGridEl, spiritRows, "spirit");
       renderSpiritImpact(spiritRows);
+      renderAbilities();
     }
 
     async function renderHeroById(heroId) {
       const hero = await fetchHero(heroId);
       const signatureIds = [hero.items?.signature1, hero.items?.signature2, hero.items?.signature3, hero.items?.signature4].filter(Boolean);
-      const [weapon, ...signatureItems] = await Promise.all([
+      const [weapon, ...abilityBundlesRaw] = await Promise.all([
         fetchWeapon(hero.items.weapon_primary),
-        ...signatureIds.map((id) => fetchItem(id))
+        ...signatureIds.map((id) => fetchAbilityBundle(id))
       ]);
+
+      const abilityBundles = abilityBundlesRaw.filter(Boolean);
+      const validSignatureItems = abilityBundles.map((bundle) => bundle.base).filter(Boolean);
       currentModel = {
         hero,
         weapon,
+        signatureItems: validSignatureItems,
+        abilityBundles,
+        abilityTiers: [0, 0, 0, 0],
         weaponStatIds: getCategoryStatIds(hero, "weapon"),
         vitalityStatIds: getCategoryStatIds(hero, "vitality"),
         spiritStatIds: getCategoryStatIds(hero, "spirit"),
-        spiritScaleEntries: collectSpiritScaleEntries(signatureItems.filter(Boolean))
+        spiritScaleEntries: collectSpiritScaleEntries(validSignatureItems)
       };
 
       heroNameEl.textContent = hero.name;
@@ -2074,6 +2648,7 @@
       weaponNameEl.textContent = "-";
       weaponTagsEl.innerHTML = "";
       setWeaponHeaderImage("", "");
+      abilitiesGridEl.innerHTML = "";
     }
 
     function setLoadingState(text) {
@@ -2212,4 +2787,3 @@
   </script>
 </body>
 </html>
-

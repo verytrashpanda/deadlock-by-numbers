@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Deadlock Hero HUD</title>
+  <title>Deadlock by Numbers</title>
   <style>
     @font-face {
       font-family: "DeadlockSans";
@@ -66,6 +66,12 @@
       --text: #efe6d5;
       --muted: #a79a88;
       --line: rgba(255, 220, 170, 0.15);
+      --hero-ui-r: 95;
+      --hero-ui-g: 63;
+      --hero-ui-b: 40;
+      --boon-accent-r: 84;
+      --boon-accent-g: 172;
+      --boon-accent-b: 135;
       --weapon-1: #5c3a1f;
       --weapon-2: #2f2218;
       --vitality-1: #344124;
@@ -118,6 +124,18 @@
       opacity: 1;
     }
 
+    .hero-bg-tint-layer {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 480ms ease;
+      z-index: 0;
+    }
+
+    .hero-bg-tint-layer.active {
+      opacity: 1;
+    }
+
     .hero-bg-overlay {
       position: absolute;
       inset: 0;
@@ -142,9 +160,37 @@
       gap: 1rem;
     }
 
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .tab-btn {
+      border: 1px solid rgba(255, 220, 170, 0.2);
+      background: rgba(30, 20, 14, 0.82);
+      color: #e8d8bf;
+      padding: 0.42rem 0.9rem;
+      font-size: 0.86rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      border-radius: 0;
+    }
+
+    .tab-btn.active {
+      border-color: rgba(255, 220, 170, 0.62);
+      background: rgba(85, 57, 31, 0.92);
+      color: #fff2dd;
+    }
+
+    .view[hidden] {
+      display: none !important;
+    }
+
     .hero-list {
-      background: rgba(20, 16, 13, 0.86);
-      border: 1px solid rgba(255, 220, 170, 0.16);
+      background: linear-gradient(160deg, rgba(var(--hero-ui-r), var(--hero-ui-g), var(--hero-ui-b), 0.25), rgba(20, 16, 13, 0.86));
+      border: 1px solid rgba(var(--hero-ui-r), var(--hero-ui-g), var(--hero-ui-b), 0.45);
       border-radius: 12px;
       padding: 0.75rem;
       display: flex;
@@ -156,32 +202,50 @@
     }
 
     .hero-btn {
-      border: 1px solid #6b5a4a;
-      background: rgba(45, 31, 22, 0.9);
+      border: 1px solid rgba(var(--hero-ui-r), var(--hero-ui-g), var(--hero-ui-b), 0.55);
+      background: linear-gradient(155deg, rgba(var(--hero-ui-r), var(--hero-ui-g), var(--hero-ui-b), 0.22), rgba(45, 31, 22, 0.9));
       color: var(--text);
       border-radius: 999px;
       padding: 0.45rem 0.8rem;
       cursor: pointer;
       transition: 120ms ease;
       font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      --btn-r: var(--hero-ui-r);
+      --btn-g: var(--hero-ui-g);
+      --btn-b: var(--hero-ui-b);
+    }
+
+    .hero-btn-icon {
+      width: 1rem;
+      height: 1rem;
+      object-fit: cover;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      flex: 0 0 auto;
     }
 
     .hero-btn:hover {
-      border-color: #f2c37d;
+      border-color: rgba(var(--btn-r), var(--btn-g), var(--btn-b), 0.98);
+      box-shadow: 0 0 0 1px rgba(var(--btn-r), var(--btn-g), var(--btn-b), 0.45);
       transform: translateY(-1px);
     }
 
     .hero-btn.active {
-      border-color: #ffdca8;
-      background: linear-gradient(135deg, #6b4a27, #3f2a1b);
-      box-shadow: 0 0 0 1px rgba(255, 214, 151, 0.2), 0 8px 20px rgba(0, 0, 0, 0.25);
+      border-color: rgba(var(--hero-ui-r), var(--hero-ui-g), var(--hero-ui-b), 0.95);
+      background: linear-gradient(135deg, rgba(var(--hero-ui-r), var(--hero-ui-g), var(--hero-ui-b), 0.62), rgba(40, 28, 22, 0.95));
+      box-shadow: 0 0 0 1px rgba(var(--hero-ui-r), var(--hero-ui-g), var(--hero-ui-b), 0.4), 0 8px 20px rgba(0, 0, 0, 0.25);
     }
 
     .hud {
-      border: 1px solid rgba(255, 220, 170, 0.12);
+      border: 1px solid rgba(var(--hero-ui-r), var(--hero-ui-g), var(--hero-ui-b), 0.52);
       border-radius: 16px;
-      background: linear-gradient(165deg, rgba(28, 21, 16, 0.94), rgba(17, 13, 10, 0.96));
+      background: linear-gradient(165deg, rgba(var(--hero-ui-r), var(--hero-ui-g), var(--hero-ui-b), 0.3), rgba(17, 13, 10, 0.96));
       padding: 1rem;
+      transition: background 260ms ease, border-color 260ms ease, box-shadow 260ms ease;
+      box-shadow: inset 0 1px 0 rgba(var(--hero-ui-r), var(--hero-ui-g), var(--hero-ui-b), 0.28);
     }
 
     .hud-header {
@@ -215,14 +279,15 @@
     }
 
     .boon-item {
-      border: 1px solid rgba(255, 220, 170, 0.18);
-      background: rgba(15, 11, 9, 0.45);
+      border: 1px solid rgba(var(--boon-accent-r), var(--boon-accent-g), var(--boon-accent-b), 0.55);
+      background: linear-gradient(160deg, rgba(var(--boon-accent-r), var(--boon-accent-g), var(--boon-accent-b), 0.2), rgba(15, 11, 9, 0.45));
       border-radius: 6px;
       padding: 0.38rem 0.48rem;
       min-height: 52px;
       display: grid;
       align-content: center;
       gap: 0.14rem;
+      box-shadow: inset 0 1px 0 rgba(var(--boon-accent-r), var(--boon-accent-g), var(--boon-accent-b), 0.35);
     }
 
     .boon-top {
@@ -234,6 +299,43 @@
       color: #fff1dd;
       font-family: var(--font-serif);
       line-height: 1.1;
+    }
+
+    .boon-stat-icon {
+      width: 1.02rem;
+      height: 1.02rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      margin-right: 0.04rem;
+    }
+
+    .boon-stat-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0.98;
+    }
+
+    .boon-stat-mask {
+      width: 1.02rem;
+      height: 1.02rem;
+      display: inline-block;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      -webkit-mask-size: contain;
+      mask-size: contain;
+    }
+
+    .boon-stat-mask.heal {
+      background-color: #00ff9a;
+    }
+
+    .boon-stat-mask.melee {
+      background-color: #ff9900;
     }
 
     .boon-label {
@@ -284,7 +386,7 @@
 
     #level-slider {
       width: 100%;
-      accent-color: #f0bb73;
+      accent-color: rgb(var(--boon-accent-r), var(--boon-accent-g), var(--boon-accent-b));
       cursor: pointer;
     }
 
@@ -514,6 +616,7 @@
       font-family: var(--font-serif);
       flex: 0 0 auto;
       white-space: nowrap;
+      font-variant-numeric: tabular-nums lining-nums;
     }
 
     .stat-scale {
@@ -524,6 +627,7 @@
       white-space: nowrap;
       margin-left: 0.12rem;
       flex: 0 0 auto;
+      font-variant-numeric: tabular-nums lining-nums;
     }
 
     .stat-name {
@@ -544,28 +648,35 @@
     }
 
     .boon-icons {
-      margin-left: 0.22rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0;
+      margin-left: 0.2rem;
+      position: relative;
+      width: 1.9rem;
+      height: 1.56rem;
+      display: inline-block;
       flex: 0 0 auto;
     }
 
     .boon-icon {
-      width: 0.95rem;
-      height: 0.95rem;
+      position: absolute;
       object-fit: contain;
-      opacity: 0.95;
-      filter: grayscale(0.05) contrast(1.03);
-      transform: scale(1.48);
-      transform-origin: center;
-      position: relative;
+      opacity: 0.98;
+    }
+
+    .boon-icon.arrow {
+      left: 0;
+      top: 0.04rem;
+      width: 1.46rem;
+      height: 1.46rem;
       z-index: 1;
     }
 
-    .boon-icon + .boon-icon {
-      margin-left: -0.28rem;
+    .boon-icon.face {
+      right: 0;
+      top: 0.12rem;
+      width: 1.22rem;
+      height: 1.22rem;
       z-index: 2;
+      border-radius: 999px;
     }
 
     .boon-icon-fallback {
@@ -605,36 +716,8 @@
     }
 
     .spirit-impact-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
-      gap: 0.38rem;
+      display: block;
       margin-top: 0.32rem;
-    }
-
-    .spirit-power-card {
-      border: 1px solid rgba(207, 158, 255, 0.3);
-      background: rgba(13, 9, 17, 0.44);
-      border-radius: 2px;
-      min-height: 68px;
-      padding: 0.55rem;
-      display: grid;
-      align-content: center;
-      gap: 0.2rem;
-    }
-
-    .spirit-power-main {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-size: 1.12rem;
-      font-weight: 800;
-      color: #e9d8ff;
-    }
-
-    .spirit-power-text {
-      font-size: 1.04rem;
-      line-height: 1.22;
-      color: #ddd4e8;
     }
 
     .spirit-impact-list {
@@ -664,6 +747,26 @@
       gap: 0.48rem;
     }
 
+    .impact-meta {
+      display: inline-grid;
+      gap: 0.08rem;
+      line-height: 1.08;
+    }
+
+    .impact-ability {
+      color: #efe2d0;
+      font-size: 0.88rem;
+      font-weight: 800;
+      font-family: var(--font-serif);
+    }
+
+    .impact-property {
+      color: #cdb8de;
+      font-size: 0.74rem;
+      font-weight: 700;
+      font-family: var(--font-text);
+    }
+
     .impact-value {
       color: #f3e9dc;
       font-size: 1.02rem;
@@ -671,14 +774,49 @@
       min-width: 1.9rem;
       text-align: right;
       font-family: var(--font-serif);
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums lining-nums;
+    }
+
+    .impact-scale-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 1.6rem;
+      border: 1px solid rgba(203, 144, 255, 0.52);
+      overflow: hidden;
+      flex: 0 0 auto;
+    }
+
+    .impact-scale-on {
+      padding: 0.2rem 0.3rem;
+      background: rgba(18, 13, 24, 0.9);
+      color: #c3adcf;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.2rem;
+    }
+
+    .impact-scale-on img {
+      width: 0.92rem;
+      height: 0.92rem;
+      object-fit: contain;
+      filter: none;
+    }
+
+    .impact-scale-mult {
+      padding: 0.2rem 0.44rem;
+      background: rgba(34, 24, 43, 0.95);
+      color: #f0ddff;
+      font-size: 0.88rem;
+      font-weight: 800;
+      font-family: var(--font-serif);
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums lining-nums;
     }
 
     @media (max-width: 640px) {
       .stat-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .spirit-impact-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -696,10 +834,10 @@
     }
 
     .impact-icon {
-      width: 1.45rem;
-      height: 1.45rem;
+      width: 1.5rem;
+      height: 1.5rem;
       border-radius: 999px;
-      background: rgba(228, 221, 223, 0.78);
+      background: #b9b5bc;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -707,10 +845,113 @@
     }
 
     .impact-icon img {
-      width: 0.85rem;
-      height: 0.85rem;
+      width: 0.9rem;
+      height: 0.9rem;
       object-fit: contain;
-      filter: grayscale(1) contrast(1.15) brightness(0.33);
+      filter: grayscale(1) brightness(0.28) contrast(1.1);
+    }
+
+    .scaling-panel {
+      border: 1px solid rgba(255, 220, 170, 0.12);
+      background: linear-gradient(165deg, rgba(28, 21, 16, 0.94), rgba(17, 13, 10, 0.96));
+      padding: 0.9rem;
+    }
+
+    .scaling-header {
+      display: grid;
+      gap: 0.52rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .metric-tabs {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .scaling-controls {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .metric-btn {
+      border: 1px solid rgba(255, 220, 170, 0.2);
+      background: rgba(20, 13, 10, 0.68);
+      color: #d8c9b1;
+      padding: 0.32rem 0.62rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .metric-btn.active {
+      border-color: rgba(255, 220, 170, 0.62);
+      background: rgba(82, 56, 31, 0.92);
+      color: #fff1db;
+    }
+
+    .scaling-hero-toggles {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 0.26rem;
+      max-height: 220px;
+      overflow: auto;
+      padding-right: 0.2rem;
+    }
+
+    .scaling-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: 1px solid rgba(255, 220, 170, 0.14);
+      background: rgba(12, 9, 7, 0.5);
+      padding: 0.28rem 0.4rem;
+      font-size: 0.78rem;
+      color: #e0d0b8;
+      border-radius: 0;
+    }
+
+    .scaling-toggle input {
+      margin: 0;
+    }
+
+    .swatch {
+      width: 0.62rem;
+      height: 0.62rem;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      flex: 0 0 auto;
+    }
+
+    .scaling-chart-wrap {
+      margin-top: 0.7rem;
+      border: 1px solid rgba(255, 220, 170, 0.2);
+      background: rgba(0, 0, 0, 0.24);
+      padding: 0.45rem;
+      position: relative;
+    }
+
+    .scaling-chart {
+      width: 100%;
+      height: 600px;
+      display: block;
+    }
+
+    .scaling-tooltip {
+      position: absolute;
+      pointer-events: none;
+      background: rgba(20, 13, 10, 0.94);
+      border: 1px solid rgba(255, 220, 170, 0.48);
+      color: #f6e7d0;
+      font-size: 0.78rem;
+      line-height: 1.25;
+      padding: 0.28rem 0.4rem;
+      white-space: nowrap;
+      z-index: 5;
+      transform: translate(10px, -120%);
     }
 
     
@@ -720,12 +961,20 @@
 <div class="hero-bg" aria-hidden="true">
     <div id="hero-bg-a" class="hero-bg-layer active"></div>
     <div id="hero-bg-b" class="hero-bg-layer"></div>
+    <div id="hero-tint-a" class="hero-bg-tint-layer active"></div>
+    <div id="hero-tint-b" class="hero-bg-tint-layer"></div>
     <div class="hero-bg-overlay"></div>
   </div>
 <main class="container">
-    <section id="hero-list" class="hero-list" aria-label="Hero list"></section>
+    <section class="tabs" aria-label="Views">
+      <button id="tab-heroes" class="tab-btn active" type="button">Heroes</button>
+      <button id="tab-scaling" class="tab-btn" type="button">Scaling</button>
+    </section>
 
-    <section class="hud" aria-live="polite">
+    <section id="heroes-view" class="view">
+      <section id="hero-list" class="hero-list" aria-label="Hero list"></section>
+
+      <section class="hud" aria-live="polite">
       <header class="hud-header">
         <div class="header-main">
           <h1 id="hero-name" class="hud-name"></h1>
@@ -735,10 +984,10 @@
 
       <section class="controls">
         <div class="level-row">
-          <span>Level</span>
-          <strong id="level-readout">1</strong>
+          <span>Boon</span>
+          <strong id="level-readout">0</strong>
         </div>
-        <input id="level-slider" type="range" min="1" max="36" step="1" value="1" />
+        <input id="level-slider" type="range" min="0" max="35" step="1" value="0" />
       </section>
 
       <section class="boards-grid">
@@ -789,12 +1038,33 @@
             <section id="spirit-impact-wrap" class="secondary-divider">
               <p class="impact-title">Spirit Power Impact</p>
               <div class="spirit-impact-grid">
-                <div id="spirit-power-card" class="spirit-power-card"></div>
                 <div id="spirit-impact-list" class="spirit-impact-list"></div>
               </div>
             </section>
           </div>
         </article>
+      </section>
+      </section>
+    </section>
+
+    <section id="scaling-view" class="view" hidden>
+      <section class="scaling-panel">
+        <header class="scaling-header">
+          <div class="metric-tabs" id="metric-tabs">
+            <button class="metric-btn active" data-metric="weapon" type="button">Weapon Damage</button>
+            <button class="metric-btn" data-metric="health" type="button">Health</button>
+            <button class="metric-btn" data-metric="spirit" type="button">Spirit Power</button>
+          </div>
+          <div class="scaling-controls">
+            <button id="display-all-btn" class="metric-btn" type="button">Display All</button>
+            <button id="display-none-btn" class="metric-btn" type="button">Display None</button>
+          </div>
+          <section id="scaling-hero-toggles" class="scaling-hero-toggles" aria-label="Hero toggles"></section>
+        </header>
+        <div class="scaling-chart-wrap">
+          <svg id="scaling-chart" class="scaling-chart" viewBox="0 0 1200 600" preserveAspectRatio="none" aria-label="Scaling graph"></svg>
+          <div id="scaling-tooltip" class="scaling-tooltip" hidden></div>
+        </div>
       </section>
     </section>
   </main>
@@ -802,6 +1072,16 @@
   <script>
     const ASSETS_API = "https://assets.deadlock-api.com/v2";
     const ICONS_API = "https://assets.deadlock-api.com/v1/icons";
+    const tabHeroesEl = document.getElementById("tab-heroes");
+    const tabScalingEl = document.getElementById("tab-scaling");
+    const heroesViewEl = document.getElementById("heroes-view");
+    const scalingViewEl = document.getElementById("scaling-view");
+    const metricTabsEl = document.getElementById("metric-tabs");
+    const displayAllBtnEl = document.getElementById("display-all-btn");
+    const displayNoneBtnEl = document.getElementById("display-none-btn");
+    const scalingHeroTogglesEl = document.getElementById("scaling-hero-toggles");
+    const scalingChartEl = document.getElementById("scaling-chart");
+    const scalingTooltipEl = document.getElementById("scaling-tooltip");
     const heroListEl = document.getElementById("hero-list");
     const heroNameEl = document.getElementById("hero-name");
     const boonStripEl = document.getElementById("boon-strip");
@@ -820,10 +1100,11 @@
     const vitalitySecondaryWrapEl = document.getElementById("vitality-secondary-wrap");
     const spiritGridEl = document.getElementById("spirit-grid");
     const spiritImpactWrapEl = document.getElementById("spirit-impact-wrap");
-    const spiritPowerCardEl = document.getElementById("spirit-power-card");
     const spiritImpactListEl = document.getElementById("spirit-impact-list");
     const heroBgAEl = document.getElementById("hero-bg-a");
     const heroBgBEl = document.getElementById("hero-bg-b");
+    const heroTintAEl = document.getElementById("hero-tint-a");
+    const heroTintBEl = document.getElementById("hero-tint-b");
 
     let activeButton = null;
     let heroIndex = [];
@@ -832,7 +1113,12 @@
     const itemCache = new Map();
     let iconsIndex = {};
     let currentModel = null;
+    const scalingCache = new Map();
+    const selectedScalingHeroes = new Set();
+    let scalingMetric = "weapon";
+    let scalingReady = false;
     let activeBgLayer = "a";
+    let activeTintLayer = "a";
     let activeWeaponImageLayer = "a";
 
     const STAT_LABELS = {
@@ -887,14 +1173,14 @@
       EBulletSpeed: ["bullet_velocity"],
       EBulletSpeedIncrease: ["bullet_velocity"],
       EWeaponDPS: ["health_stealing_bullets_color"],
-      ELightMeleeDamage: ["damage_crit_color"],
+      ELightMeleeDamage: ["melee_light"],
       EHeavyMeleeDamage: ["citadel_build_tag_melee"],
-      EBulletLifesteal: ["citadel_build_tag_melee"],
+      EBulletLifesteal: ["health_stealing_bullets_color"],
       ECritDamageBonusScale: ["damage_crit_color"],
       EMaxHealth: ["health"],
       EBaseHealthRegen: ["health_rege"],
-      EOOCHealthRegen: ["healing_booster"],
-      EHealingOutput: ["health_rege"],
+      EOOCHealthRegen: ["health_rege"],
+      EHealingOutput: ["healing_booster"],
       EBulletArmorDamageReduction: ["armor_bullet_color"],
       ETechArmorDamageReduction: ["armor_spirit_color"],
       EMeleeResist: ["armor_melee_color"],
@@ -935,16 +1221,16 @@
       return typeof value === "number" ? value : Number(value);
     }
 
-    function round(value, places = 2) {
-      if (value === null || value === undefined || Number.isNaN(value)) return null;
-      const factor = 10 ** places;
-      return Math.round(value * factor) / factor;
-    }
-
-    function compact(value, places = 2) {
+    function fullPrecision(value) {
       if (value === null || value === undefined || Number.isNaN(value)) return "-";
-      const fixed = round(value, places).toFixed(places);
-      return fixed.replace(/\.0+$/, "").replace(/(\.\d*?)0+$/, "$1");
+      const numeric = typeof value === "number" ? value : Number(value);
+      if (!Number.isFinite(numeric)) return "-";
+      const normalized = Math.abs(numeric) < 1e-12 ? 0 : numeric;
+      const rendered = normalized.toLocaleString("en-US", {
+        useGrouping: false,
+        maximumFractionDigits: 3
+      });
+      return rendered.includes(".") ? rendered.replace(/\.?0+$/, "") : rendered;
     }
 
     function toTitle(value) {
@@ -997,9 +1283,22 @@
 
     function formatValue(value, statType) {
       if (value === null || value === undefined || Number.isNaN(value)) return "-";
-      if (statType === "EBulletSpeed") return `${compact(value, 0)}m/s`;
-      if (["EMaxMoveSpeed", "ESprintSpeed", "EDashSpeedInMeters"].includes(statType)) return `${compact(value, 1)}m`;
-      if (statType.includes("Time") || statType.includes("Cooldown")) return `${compact(value, 2)}s`;
+      const multiplierPercentStats = new Set([
+        "EReloadSpeed",
+        "ETechRange",
+        "ETechDuration",
+        "EHealingOutput",
+        "ECritDamageReceivedScale"
+      ]);
+      const asPercentFromMultiplier = (raw) => (raw - 1) * 100;
+      const displayNumber = multiplierPercentStats.has(statType) ? asPercentFromMultiplier(value) : value;
+
+      if (multiplierPercentStats.has(statType)) {
+        return `${fullPrecision(displayNumber)}%`;
+      }
+      if (statType === "EBulletSpeed") return `${fullPrecision(displayNumber)}m/s`;
+      if (["EMaxMoveSpeed", "ESprintSpeed", "EDashSpeedInMeters"].includes(statType)) return `${fullPrecision(displayNumber)}m`;
+      if (statType.includes("Time") || statType.includes("Cooldown")) return `${fullPrecision(displayNumber)}s`;
       if (
         statType.includes("Resist") ||
         statType.includes("BonusScale") ||
@@ -1008,11 +1307,24 @@
         statType.includes("Lifesteal") ||
         statType === "ECritDamageReceivedScale"
       ) {
-        return `${compact(value, 0)}%`;
+        return `${fullPrecision(displayNumber)}%`;
       }
-      if (statType === "ERoundsPerSecond" || statType === "EFireRate") return compact(value, 2);
-      if (statType === "EWeaponDPS" || statType === "EClipSize" || statType.includes("Damage")) return compact(value, 0);
-      return compact(value, 2);
+      if (statType === "ERoundsPerSecond" || statType === "EFireRate") return fullPrecision(displayNumber);
+      if (statType === "EWeaponDPS" || statType === "EClipSize" || statType.includes("Damage")) return fullPrecision(displayNumber);
+      return fullPrecision(displayNumber);
+    }
+
+    function isDisplayZero(value, statType) {
+      if (value === null || value === undefined || Number.isNaN(value)) return false;
+      const multiplierPercentStats = new Set([
+        "EReloadSpeed",
+        "ETechRange",
+        "ETechDuration",
+        "EHealingOutput",
+        "ECritDamageReceivedScale"
+      ]);
+      const displayNumber = multiplierPercentStats.has(statType) ? (value - 1) * 100 : value;
+      return fullPrecision(displayNumber) === "0";
     }
 
     function resolveIconKey(iconKey) {
@@ -1065,6 +1377,40 @@
       );
     }
 
+    function parseAbilityBaseValue(property) {
+      const raw = property?.value;
+      if (raw === null || raw === undefined) return { value: 0, unit: "" };
+      if (typeof raw === "number" && Number.isFinite(raw)) {
+        return { value: raw, unit: property?.postfix || "" };
+      }
+      const text = String(raw).trim();
+      const match = text.match(/-?\d+(?:\.\d+)?/);
+      if (!match) return { value: 0, unit: property?.postfix || "" };
+      const numeric = Number(match[0]);
+      const trailing = text.replace(match[0], "").trim();
+      const unit = property?.postfix !== undefined && property?.postfix !== null
+        ? String(property.postfix)
+        : trailing;
+      return { value: Number.isFinite(numeric) ? numeric : 0, unit };
+    }
+
+    function formatScaledAbilityValue(value, unit) {
+      const suffix = unit === null || unit === undefined ? "" : String(unit);
+      return `${fullPrecision(value)}${suffix}`;
+    }
+
+    function isSpiritScalingFunction(scaleFn) {
+      const type = String(scaleFn?.specific_stat_scale_type || "");
+      if (type === "ETechPower") return true;
+      const scalingStats = Array.isArray(scaleFn?.scaling_stats) ? scaleFn.scaling_stats : [];
+      if (scalingStats.includes("ETechPower")) return true;
+      const className = String(scaleFn?.class_name || "").toLowerCase();
+      const subclassName = String(scaleFn?.subclass_name || "").toLowerCase();
+      // Some spirit-damage scalers are tagged as EStatsCount in API metadata.
+      if (className.includes("tech_damage") || subclassName.includes("tech_damage")) return true;
+      return false;
+    }
+
     async function loadIconsIndex() {
       try {
         const res = await fetch(ICONS_API);
@@ -1102,9 +1448,10 @@
           return fromStarting("max_health");
         case "EBaseHealthRegen":
           return fromStarting("base_health_regen");
+        case "EHealingOutput":
+          return 1;
         case "EBulletArmorDamageReduction":
         case "ETechArmorDamageReduction":
-        case "EHealingOutput":
         case "EOOCHealthRegen":
         case "EMeleeResist":
         case "EDebuffResist":
@@ -1116,7 +1463,6 @@
         case "EBulletLifesteal":
         case "ECritDamageBonusScale":
         case "EClipSizeIncrease":
-        case "EStaminaCooldown":
         case "EStaminaRegenIncrease":
           return 0;
         case "EMaxMoveSpeed":
@@ -1130,14 +1476,20 @@
         case "EBulletDamage":
           return asNumber(w.bullet_damage);
         case "ERoundsPerSecond":
-        case "EFireRate":
           return asNumber(w.shots_per_second);
+        case "EFireRate":
+          return 0;
         case "EClipSize":
           return asNumber(w.clip_size);
         case "EReloadTime":
           return asNumber(w.reload_duration);
         case "EReloadSpeed":
           return fromStarting("reload_speed");
+        case "EStaminaCooldown": {
+          const staminaRegen = fromStarting("stamina_regen_per_second");
+          if (staminaRegen && staminaRegen > 0) return 1 / staminaRegen;
+          return null;
+        }
         case "EBulletSpeed":
           return w.bullet_speed ? toMeters(asNumber(w.bullet_speed)) : null;
         case "EWeaponDPS":
@@ -1155,7 +1507,7 @@
         case "ETechCooldown":
           return 0;
         case "ECritDamageReceivedScale":
-          return fromStarting("crit_damage_received_scale");
+          return 1;
         default:
           return null;
       }
@@ -1184,11 +1536,11 @@
       const boonArrowIcon = iconUrlFromKey("keystat_boon_arrow");
       rows.forEach((row) => {
         const statRow = document.createElement("article");
-        const isZero = row.current === 0;
+        const isZero = isDisplayZero(row.current, row.statType);
         const hasBoonScaling = row.perLevel !== 0;
-        const scaleText = hasBoonScaling ? `+${compact(row.perLevel, 2)}` : "";
+        const scaleText = hasBoonScaling ? `+${fullPrecision(row.perLevel)}` : "";
         const boonIconsHtml = hasBoonScaling
-          ? `<span class="boon-icons">${boonArrowIcon ? `<img class="boon-icon" src="${boonArrowIcon}" alt="" loading="lazy" />` : `<span class="boon-icon-fallback">^</span>`}${heroFaceIcon ? `<img class="boon-icon" src="${heroFaceIcon}" alt="" loading="lazy" />` : `<span class="boon-icon-fallback">H</span>`}</span>`
+          ? `<span class="boon-icons">${boonArrowIcon ? `<img class="boon-icon arrow" src="${boonArrowIcon}" alt="" loading="lazy" />` : `<span class="boon-icon-fallback">^</span>`}${heroFaceIcon ? `<img class="boon-icon face" src="${heroFaceIcon}" alt="" loading="lazy" />` : `<span class="boon-icon-fallback">H</span>`}</span>`
           : "";
         const { url: iconUrl, key: iconKey } = iconDataForStat(row.statType);
         const useMaskTint = iconUrl && iconNeedsTint(iconKey);
@@ -1231,32 +1583,30 @@
 
     function renderSpiritImpact(rows) {
       const spiritPowerRow = rows.find((row) => row.statType === "ETechPower");
-      const spiritPower = spiritPowerRow?.current ?? 0;
-      const spiritPerLevel = spiritPowerRow?.perLevel ?? 0;
-      const spiritBase = spiritPowerRow?.base ?? 0;
-      const level = Number(levelSliderEl.value);
-      const gainedFromLevels = spiritPerLevel * (level - 1);
-      const spiritPowerIcon = iconUrlFromKey("citadel_build_tag_spirit") || iconUrlFromKey("keystat_spirit_arrow") || iconUrlFromKey("spirit");
-      spiritPowerCardEl.innerHTML = `
-        <div class="spirit-power-main"><span class="stat-icon">${spiritPowerIcon ? `<img class="stat-icon-img" src="${spiritPowerIcon}" alt="" loading="lazy" />` : ""}</span><span>${formatValue(spiritPower, "ETechPower")} Spirit Power</span></div>
-        <div class="spirit-power-text">Level ${level}: Base ${compact(spiritBase, 2)} + ${compact(spiritPerLevel, 2)}/lvl = +${compact(gainedFromLevels, 2)} from levels.</div>
-      `;
+      const displayLevel = Number(levelSliderEl.value);
+      const directBase = getBaseStatValue("ETechPower", currentModel?.hero || {}, currentModel?.weapon || {}) || 0;
+      const directPerLevel = getScalePerLevel("ETechPower", currentModel?.hero || {}, {});
+      const spiritPower = spiritPowerRow?.current ?? (directBase + directPerLevel * displayLevel);
+      const spiritScaleIcon = iconUrlFromKey("citadel_build_tag_spirit") || iconUrlFromKey("spirit");
 
       const impactRows = (currentModel?.spiritScaleEntries || [])
         .map((entry) => ({
-          label: `${entry.ability} - ${entry.property}`,
-          value: `${compact(spiritPower * entry.scale, 2)} (${entry.scale >= 0 ? "+" : ""}${compact(spiritPerLevel * entry.scale, 2)}/lvl)`,
+          ability: entry.ability,
+          property: entry.property,
+          scale: entry.scale,
           iconUrl: entry.iconUrl || "",
-          absCurrent: Math.abs(spiritPower * entry.scale)
+          total: (asNumber(entry.base) || 0) + spiritPower * entry.scale,
+          unit: entry.unit || "",
+          absScale: Math.abs(entry.scale)
         }))
-        .sort((a, b) => b.absCurrent - a.absCurrent);
+        .sort((a, b) => b.absScale - a.absScale);
 
       if (!impactRows.length) {
         spiritImpactListEl.innerHTML = `<div class="impact-row"><span class="impact-label">No hero-specific spirit scaling entries found.</span><span class="impact-value">-</span></div>`;
       } else {
         spiritImpactListEl.innerHTML = impactRows
           .slice(0, 8)
-          .map((row) => `<div class="impact-row"><span class="impact-label">${row.iconUrl ? `<span class="impact-icon"><img src="${row.iconUrl}" alt="" loading="lazy" /></span>` : ""} ${row.label}</span><span class="impact-value">${row.value}</span></div>`)
+          .map((row) => `<div class="impact-row"><span class="impact-label">${row.iconUrl ? `<span class="impact-icon"><img src="${row.iconUrl}" alt="" loading="lazy" /></span>` : ""}<span class="impact-meta"><span class="impact-ability">${row.ability}</span><span class="impact-property">${row.property}</span></span></span><span class="impact-value">${formatScaledAbilityValue(row.total, row.unit)}</span><span class="impact-scale-chip"><span class="impact-scale-on">${spiritScaleIcon ? `<img src="${spiritScaleIcon}" alt="" loading="lazy" />` : ""}</span><span class="impact-scale-mult">x ${fullPrecision(row.scale)}</span></span></div>`)
           .join("");
       }
       spiritImpactWrapEl.style.display = "";
@@ -1265,17 +1615,18 @@
     function renderBoonStrip(hero) {
       const scale = hero?.standard_level_up_upgrades || {};
       const heroFace = getHeroFaceIconUrl(hero);
-      const arrow = iconUrlFromKey("keystat_boon_arrow");
-      const iconTrail = `${heroFace ? `<img class="boon-inline-icon" src="${heroFace}" alt="" loading="lazy" />` : ""}${arrow ? `<img class="boon-inline-icon" src="${arrow}" alt="" loading="lazy" />` : ""}`;
-      const iconHtml = iconTrail ? `<span class="boon-inline-icons">${iconTrail}</span>` : "";
+      const boonArrowIcon = iconUrlFromKey("keystat_boon_arrow");
+      const iconHtml = (boonArrowIcon || heroFace)
+        ? `<span class="boon-icons">${boonArrowIcon ? `<img class="boon-icon arrow" src="${boonArrowIcon}" alt="" loading="lazy" />` : `<span class="boon-icon-fallback">^</span>`}${heroFace ? `<img class="boon-icon face" src="${heroFace}" alt="" loading="lazy" />` : `<span class="boon-icon-fallback">H</span>`}</span>`
+        : "";
 
       const boons = [
-        { value: asNumber(scale.MODIFIER_VALUE_BASE_HEALTH_FROM_LEVEL) || 0, label: "Health / Level" },
-        { value: asNumber(scale.MODIFIER_VALUE_BASE_BULLET_DAMAGE_FROM_LEVEL) || 0, label: "Bullet Damage / Level" },
-        { value: asNumber(scale.MODIFIER_VALUE_BASE_MELEE_DAMAGE_FROM_LEVEL) || 0, label: "Melee Damage / Level" },
-        { value: asNumber(scale.MODIFIER_VALUE_TECH_POWER) || 0, label: "Spirit Power / Level" },
-        { value: asNumber(scale.MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST) || 0, label: "Bullet Resist / Level" },
-        { value: asNumber(scale.MODIFIER_VALUE_TECH_ARMOR_DAMAGE_RESIST) || 0, label: "Spirit Resist / Level" }
+        { value: asNumber(scale.MODIFIER_VALUE_BASE_HEALTH_FROM_LEVEL) || 0, label: "Health / Boon", statType: "EMaxHealth", iconKey: "heal", tone: "heal" },
+        { value: asNumber(scale.MODIFIER_VALUE_BASE_BULLET_DAMAGE_FROM_LEVEL) || 0, label: "Bullet Damage / Boon", statType: "EBulletDamage" },
+        { value: asNumber(scale.MODIFIER_VALUE_BASE_MELEE_DAMAGE_FROM_LEVEL) || 0, label: "Melee Damage / Boon", statType: "ELightMeleeDamage", iconKey: "melee_light", tone: "melee" },
+        { value: asNumber(scale.MODIFIER_VALUE_TECH_POWER) || 0, label: "Spirit Power / Boon", statType: "ETechPower" },
+        { value: asNumber(scale.MODIFIER_VALUE_BULLET_ARMOR_DAMAGE_RESIST) || 0, label: "Bullet Resist / Boon", statType: "EBulletArmorDamageReduction" },
+        { value: asNumber(scale.MODIFIER_VALUE_TECH_ARMOR_DAMAGE_RESIST) || 0, label: "Spirit Resist / Boon", statType: "ETechArmorDamageReduction" }
       ].filter((entry) => entry.value !== 0);
 
       if (!boons.length) {
@@ -1285,8 +1636,19 @@
 
       boonStripEl.innerHTML = boons
         .map((entry) => {
-          const valueText = `+${compact(entry.value, 2)}`;
-          return `<article class="boon-item"><div class="boon-top">${valueText}${iconHtml}</div><div class="boon-label">${entry.label}</div></article>`;
+          const valueText = `+${fullPrecision(entry.value)}`;
+          const iconKey = entry.iconKey || (STAT_ICON_KEYS[entry.statType]?.[0] || "");
+          const statIcon = iconUrlFromKey(iconKey) || iconUrlForStat(entry.statType);
+          const lowerKey = String(iconKey || "").toLowerCase();
+          const explicitTone = entry.tone || (lowerKey.includes("heal")
+            ? "heal"
+            : (lowerKey.includes("melee") ? "melee" : ""));
+          const statIconHtml = statIcon
+            ? (explicitTone
+              ? `<span class="boon-stat-mask ${explicitTone}" style="-webkit-mask-image:url('${statIcon}');mask-image:url('${statIcon}');"></span>`
+              : `<span class="boon-stat-icon"><img src="${statIcon}" alt="" loading="lazy" /></span>`)
+            : "";
+          return `<article class="boon-item"><div class="boon-top">${statIconHtml}${valueText}${iconHtml}</div><div class="boon-label">${entry.label}</div></article>`;
         })
         .join("");
     }
@@ -1327,7 +1689,235 @@
           ...(hero.shop_stat_display?.vitality_stats_display?.other_display_stats || [])
         ];
       }
-      return [...(hero.shop_stat_display?.spirit_stats_display?.display_stats || [])];
+      const spiritStats = [...(hero.shop_stat_display?.spirit_stats_display?.display_stats || [])];
+      if (!spiritStats.includes("ETechPower")) spiritStats.unshift("ETechPower");
+      return spiritStats;
+    }
+
+    function getHeroUiColor(hero) {
+      const color = hero?.colors?.ui;
+      if (Array.isArray(color) && color.length >= 3) {
+        const r = Number(color[0]);
+        const g = Number(color[1]);
+        const b = Number(color[2]);
+        if ([r, g, b].every((v) => Number.isFinite(v))) {
+          return [Math.max(0, Math.min(255, r)), Math.max(0, Math.min(255, g)), Math.max(0, Math.min(255, b))];
+        }
+      }
+      return [38, 25, 15];
+    }
+
+    function setHeroTintColor(hero) {
+      const [r, g, b] = getHeroUiColor(hero);
+      document.documentElement.style.setProperty("--hero-ui-r", String(r));
+      document.documentElement.style.setProperty("--hero-ui-g", String(g));
+      document.documentElement.style.setProperty("--hero-ui-b", String(b));
+      const tintCss = [
+        `radial-gradient(circle at 12% 15%, rgba(${r}, ${g}, ${b}, 0.42) 0%, rgba(${r}, ${g}, ${b}, 0.16) 42%, transparent 68%)`,
+        `radial-gradient(circle at 88% 85%, rgba(${r}, ${g}, ${b}, 0.34) 0%, rgba(${r}, ${g}, ${b}, 0.12) 44%, transparent 70%)`,
+        `linear-gradient(180deg, rgba(${r}, ${g}, ${b}, 0.2), rgba(8, 10, 12, 0.1))`
+      ].join(",");
+
+      const nextTintLayer = activeTintLayer === "a" ? heroTintBEl : heroTintAEl;
+      const prevTintLayer = activeTintLayer === "a" ? heroTintAEl : heroTintBEl;
+      nextTintLayer.style.background = tintCss;
+      nextTintLayer.classList.add("active");
+      prevTintLayer.classList.remove("active");
+      activeTintLayer = activeTintLayer === "a" ? "b" : "a";
+    }
+
+    function heroLineColor(hero) {
+      const [r, g, b] = getHeroUiColor(hero);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function metricValueAtLevel(metric, hero, weapon, displayLevel) {
+      if (metric === "weapon") {
+        const base = getBaseStatValue("EBulletDamage", hero, weapon);
+        const per = getScalePerLevel("EBulletDamage", hero, {});
+        if (base === null || base === undefined || Number.isNaN(base)) return null;
+        return base + per * displayLevel;
+      }
+      if (metric === "health") {
+        const base = getBaseStatValue("EMaxHealth", hero, weapon);
+        const per = getScalePerLevel("EMaxHealth", hero, {});
+        if (base === null || base === undefined || Number.isNaN(base)) return null;
+        return base + per * displayLevel;
+      }
+      const base = getBaseStatValue("ETechPower", hero, weapon) || 0;
+      const per = getScalePerLevel("ETechPower", hero, {});
+      return base + per * displayLevel;
+    }
+
+    async function getScalingModel(heroId) {
+      if (scalingCache.has(heroId)) return scalingCache.get(heroId);
+      const hero = await fetchHero(heroId);
+      const weapon = await fetchWeapon(hero.items.weapon_primary);
+      const model = {
+        id: hero.id,
+        name: hero.name,
+        hero,
+        weapon,
+        color: heroLineColor(hero),
+        points: {
+          weapon: Array.from({ length: 36 }, (_, level) => metricValueAtLevel("weapon", hero, weapon, level)),
+          health: Array.from({ length: 36 }, (_, level) => metricValueAtLevel("health", hero, weapon, level)),
+          spirit: Array.from({ length: 36 }, (_, level) => metricValueAtLevel("spirit", hero, weapon, level))
+        }
+      };
+      scalingCache.set(heroId, model);
+      return model;
+    }
+
+    function setView(view) {
+      const isHeroes = view === "heroes";
+      heroesViewEl.hidden = !isHeroes;
+      scalingViewEl.hidden = isHeroes;
+      tabHeroesEl.classList.toggle("active", isHeroes);
+      tabScalingEl.classList.toggle("active", !isHeroes);
+    }
+
+    function buildScalingToggles() {
+      scalingHeroTogglesEl.innerHTML = "";
+      heroIndex.forEach((hero) => {
+        const btn = document.createElement("label");
+        btn.className = "scaling-toggle";
+        const rgb = Array.isArray(hero.color) ? `rgb(${hero.color[0]}, ${hero.color[1]}, ${hero.color[2]})` : "#d6b58a";
+        btn.innerHTML = `
+          <input type="checkbox" data-hero-id="${hero.id}" ${selectedScalingHeroes.has(hero.id) ? "checked" : ""} />
+          <span class="swatch" style="background:${rgb};"></span>
+          <span>${hero.name}</span>
+        `;
+        scalingHeroTogglesEl.appendChild(btn);
+      });
+    }
+
+    async function renderScalingGraph() {
+      const selectedIds = [...selectedScalingHeroes];
+      if (!selectedIds.length) {
+        scalingChartEl.innerHTML = `<text x="600" y="215" text-anchor="middle" fill="#ccb79a" font-size="22">Select at least one hero.</text>`;
+        return;
+      }
+
+      const models = await Promise.all(selectedIds.map((id) => getScalingModel(id)));
+      const series = models.map((m) => ({
+        name: m.name,
+        color: m.color,
+        values: m.points[scalingMetric].map((v) => (v === null || v === undefined || Number.isNaN(v) ? 0 : v))
+      }));
+
+      const all = series.flatMap((s) => s.values);
+      let yMin = Math.min(...all);
+      let yMax = Math.max(...all);
+      if (yMin === yMax) {
+        const pad = yMin === 0 ? 1 : Math.abs(yMin * 0.1);
+        yMin -= pad;
+        yMax += pad;
+      }
+
+      const width = 1200;
+      const height = 600;
+      const left = 68;
+      const right = 22;
+      const top = 18;
+      const bottom = 34;
+      const innerW = width - left - right;
+      const innerH = height - top - bottom;
+      const xForLevel = (level) => left + (level / 35) * innerW;
+      const yForValue = (value) => top + (1 - (value - yMin) / (yMax - yMin)) * innerH;
+
+      const yGrid = Array.from({ length: 6 }, (_, i) => yMin + ((yMax - yMin) * i) / 5);
+      const xGrid = [0, 5, 10, 15, 20, 25, 30, 35];
+
+      const gridLinesY = yGrid
+        .map((value) => {
+          const y = yForValue(value);
+          return `<g><line x1="${left}" y1="${y}" x2="${width - right}" y2="${y}" stroke="rgba(255,220,170,0.15)" /><text x="${left - 8}" y="${y + 4}" text-anchor="end" fill="#cbb89d" font-size="12">${fullPrecision(value)}</text></g>`;
+        })
+        .join("");
+
+      const gridLinesX = xGrid
+        .map((level) => {
+          const x = xForLevel(level);
+          return `<g><line x1="${x}" y1="${top}" x2="${x}" y2="${height - bottom}" stroke="rgba(255,220,170,0.08)" /><text x="${x}" y="${height - 10}" text-anchor="middle" fill="#cbb89d" font-size="12">${level}</text></g>`;
+        })
+        .join("");
+
+      const paths = series
+        .map((s, idx) => {
+          const d = s.values
+            .map((v, idx) => `${idx === 0 ? "M" : "L"} ${xForLevel(idx)} ${yForValue(v)}`)
+            .join(" ");
+          return `<path class="series-line" data-series="${idx}" d="${d}" fill="none" stroke="${s.color}" stroke-width="2.2" />
+                  <path class="series-hit" data-series="${idx}" d="${d}" fill="none" stroke="transparent" stroke-width="14" />`;
+        })
+        .join("");
+
+      const legend = series
+        .map((s, idx) => `<g transform="translate(${left + idx * 170}, ${top - 2})"><rect x="0" y="-11" width="12" height="12" fill="${s.color}" /><text x="17" y="-1" fill="#e9dbc5" font-size="12">${s.name}</text></g>`)
+        .join("");
+
+      const yAxisLabel = scalingMetric === "weapon" ? "Weapon Damage" : (scalingMetric === "health" ? "Health" : "Spirit Power");
+
+      scalingChartEl.innerHTML = `
+        <rect x="0" y="0" width="${width}" height="${height}" fill="transparent"></rect>
+        ${gridLinesY}
+        ${gridLinesX}
+        ${paths}
+        ${legend}
+        <text x="${left + innerW / 2}" y="${height - 4}" text-anchor="middle" fill="#e9dbc5" font-size="13">Boon (0-35)</text>
+        <text x="20" y="${top + innerH / 2}" text-anchor="middle" fill="#e9dbc5" font-size="13" transform="rotate(-90 20 ${top + innerH / 2})">${yAxisLabel}</text>
+      `;
+
+      const lineEls = [...scalingChartEl.querySelectorAll(".series-line")];
+      const hitEls = [...scalingChartEl.querySelectorAll(".series-hit")];
+      const wrapEl = scalingChartEl.parentElement;
+
+      const clearHover = () => {
+        lineEls.forEach((lineEl) => lineEl.setAttribute("stroke-width", "2.2"));
+        scalingTooltipEl.hidden = true;
+      };
+
+      const showHover = (seriesIndex, event) => {
+        const s = series[seriesIndex];
+        if (!s) return;
+        lineEls.forEach((lineEl, idx) => lineEl.setAttribute("stroke-width", idx === seriesIndex ? "4.2" : "2.2"));
+
+        const chartRect = scalingChartEl.getBoundingClientRect();
+        const wrapRect = wrapEl.getBoundingClientRect();
+        const leftPx = (left / width) * chartRect.width;
+        const innerWPx = (innerW / width) * chartRect.width;
+        const xWithin = Math.max(0, Math.min(chartRect.width, event.clientX - chartRect.left));
+        const levelFloat = ((xWithin - leftPx) / Math.max(1, innerWPx)) * 35;
+        const level = Math.max(0, Math.min(35, Math.round(levelFloat)));
+        const value = s.values[level];
+
+        scalingTooltipEl.innerHTML = `<strong>${s.name}</strong><br/>Boon ${level}: ${fullPrecision(value)}`;
+        scalingTooltipEl.style.left = `${event.clientX - wrapRect.left}px`;
+        scalingTooltipEl.style.top = `${event.clientY - wrapRect.top}px`;
+        scalingTooltipEl.hidden = false;
+      };
+
+      hitEls.forEach((hitEl, idx) => {
+        hitEl.onmousemove = (event) => showHover(idx, event);
+        hitEl.onmouseenter = (event) => showHover(idx, event);
+        hitEl.onmouseleave = clearHover;
+      });
+
+      scalingChartEl.onmouseleave = clearHover;
+    }
+
+    async function openScalingView() {
+      setView("scaling");
+      if (!scalingReady) {
+        if (!selectedScalingHeroes.size && heroIndex.length) {
+          const first = activeButton?.textContent ? heroIndex.find((h) => h.name === activeButton.textContent) : null;
+          selectedScalingHeroes.add((first || heroIndex[0]).id);
+        }
+        buildScalingToggles();
+        scalingReady = true;
+      }
+      await renderScalingGraph();
     }
 
     async function fetchHero(heroId) {
@@ -1360,18 +1950,39 @@
 
     function collectSpiritScaleEntries(abilities) {
       const entries = [];
+      const seen = new Set();
       abilities.forEach((ability) => {
         if (!ability || !ability.properties) return;
+        const abilityName = ability.name || toTitle(String(ability.class_name || "").replace(/^ability_/i, ""));
+        const abilityIconUrl = ability.image_webp || ability.image || ability.icon_webp || ability.icon || "";
         Object.entries(ability.properties).forEach(([propertyKey, property]) => {
-          const scaleFn = property?.scale_function;
-          const scaleType = scaleFn?.specific_stat_scale_type;
-          const statScale = asNumber(scaleFn?.stat_scale);
-          if (scaleType !== "ETechPower" || Number.isNaN(statScale) || statScale === 0) return;
-          entries.push({
-            ability: ability.name || toTitle(String(ability.class_name || "").replace(/^ability_/i, "")),
-            property: property.label || property.postvalue_label || propertyKey,
-            scale: statScale,
-            iconUrl: property.icon || ""
+          const baseData = parseAbilityBaseValue(property);
+          const candidates = [];
+          if (property?.scale_function) {
+            if (Array.isArray(property.scale_function)) candidates.push(...property.scale_function);
+            else candidates.push(property.scale_function);
+          }
+          if (Array.isArray(property?.scale_functions)) candidates.push(...property.scale_functions);
+          const validCandidates = candidates.filter((scaleFn) => scaleFn && !Number.isNaN(asNumber(scaleFn?.stat_scale)) && asNumber(scaleFn?.stat_scale) !== 0);
+          if (!validCandidates.length) return;
+          const hasSpiritScaling = validCandidates.some((scaleFn) => isSpiritScalingFunction(scaleFn));
+          if (!hasSpiritScaling) return;
+          const hasNonSpiritScaling = validCandidates.some((scaleFn) => !isSpiritScalingFunction(scaleFn));
+          if (hasNonSpiritScaling) return;
+          validCandidates.forEach((scaleFn) => {
+            const statScale = asNumber(scaleFn?.stat_scale);
+            if (!isSpiritScalingFunction(scaleFn) || Number.isNaN(statScale) || statScale === 0) return;
+            const dedupeKey = `${ability.class_name || abilityName}|${propertyKey}|${statScale}`;
+            if (seen.has(dedupeKey)) return;
+            seen.add(dedupeKey);
+            entries.push({
+              ability: abilityName,
+              property: property.label || property.postvalue_label || propertyKey,
+              scale: statScale,
+              iconUrl: abilityIconUrl,
+              base: baseData.value,
+              unit: baseData.unit
+            });
           });
         });
       });
@@ -1380,8 +1991,9 @@
 
     function renderCurrentLevel() {
       if (!currentModel) return;
-      const level = Number(levelSliderEl.value);
-      levelReadoutEl.textContent = String(level);
+      const displayLevel = Number(levelSliderEl.value);
+      const level = displayLevel + 1;
+      levelReadoutEl.textContent = String(displayLevel);
 
       const weaponRows = buildCategoryRows(currentModel.weaponStatIds, currentModel.hero, currentModel.weapon, level);
       const vitalityRows = buildCategoryRows(currentModel.vitalityStatIds, currentModel.hero, currentModel.weapon, level);
@@ -1429,9 +2041,10 @@
         prevLayer.classList.remove("active");
         activeBgLayer = activeBgLayer === "a" ? "b" : "a";
       }
+      setHeroTintColor(hero);
       weaponNameEl.textContent = getReadableWeaponName(hero, weapon);
-      const falloffStart = weapon.weapon_info?.damage_falloff_start_range ? round(toMeters(weapon.weapon_info.damage_falloff_start_range), 0) : null;
-      const falloffEnd = weapon.weapon_info?.damage_falloff_end_range ? round(toMeters(weapon.weapon_info.damage_falloff_end_range), 0) : null;
+      const falloffStart = weapon.weapon_info?.damage_falloff_start_range ? toMeters(weapon.weapon_info.damage_falloff_start_range) : null;
+      const falloffEnd = weapon.weapon_info?.damage_falloff_end_range ? toMeters(weapon.weapon_info.damage_falloff_end_range) : null;
       const weaponImage = getWeaponDisplayImage(hero, weapon);
       setWeaponHeaderImage(weaponImage, `${weaponNameEl.textContent} image`);
       weaponTagsEl.innerHTML = "";
@@ -1444,10 +2057,10 @@
       if (falloffStart !== null && falloffEnd !== null) {
         const rangeTag = document.createElement("span");
         rangeTag.className = "tag";
-        rangeTag.textContent = `${falloffStart}m → ${falloffEnd}m`;
+        rangeTag.textContent = `${fullPrecision(falloffStart)}m → ${fullPrecision(falloffEnd)}m`;
         weaponTagsEl.appendChild(rangeTag);
       }
-      levelSliderEl.value = "1";
+      levelSliderEl.value = "0";
       renderCurrentLevel();
     }
 
@@ -1457,7 +2070,6 @@
       vitalityGridEl.innerHTML = "";
       vitalityGridSecondaryEl.innerHTML = "";
       spiritGridEl.innerHTML = "";
-      spiritPowerCardEl.innerHTML = "";
       spiritImpactListEl.innerHTML = "";
       weaponNameEl.textContent = "-";
       weaponTagsEl.innerHTML = "";
@@ -1482,13 +2094,27 @@
         const btn = document.createElement("button");
         btn.className = "hero-btn";
         btn.type = "button";
-        btn.textContent = hero.name;
+        const r = Array.isArray(hero.color) ? Number(hero.color[0]) : 214;
+        const g = Array.isArray(hero.color) ? Number(hero.color[1]) : 181;
+        const b = Array.isArray(hero.color) ? Number(hero.color[2]) : 138;
+        btn.style.setProperty("--btn-r", String(Number.isFinite(r) ? r : 214));
+        btn.style.setProperty("--btn-g", String(Number.isFinite(g) ? g : 181));
+        btn.style.setProperty("--btn-b", String(Number.isFinite(b) ? b : 138));
+        btn.innerHTML = `${hero.icon ? `<img class="hero-btn-icon" src="${hero.icon}" alt="" loading="lazy" />` : ""}<span>${hero.name}</span>`;
 
         btn.addEventListener("click", async () => {
           if (activeButton) activeButton.classList.remove("active");
           btn.classList.add("active");
           activeButton = btn;
           await renderHeroById(hero.id);
+          if (selectedScalingHeroes.size === 1 && selectedScalingHeroes.has(hero.id) === false) {
+            selectedScalingHeroes.clear();
+            selectedScalingHeroes.add(hero.id);
+            if (scalingReady) {
+              buildScalingToggles();
+              await renderScalingGraph();
+            }
+          }
         });
 
         heroListEl.appendChild(btn);
@@ -1506,9 +2132,20 @@
         const res = await fetch(`${ASSETS_API}/heroes`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        heroIndex = data
-          .filter((hero) => hero.player_selectable && !hero.disabled)
-          .map((hero) => ({ id: hero.id, name: hero.name }))
+        const playable = data
+          .filter((hero) => hero.player_selectable && !hero.disabled);
+
+        playable.forEach((hero) => {
+          fullHeroCache.set(hero.id, hero);
+        });
+
+        heroIndex = playable
+          .map((hero) => ({
+            id: hero.id,
+            name: hero.name,
+            color: hero.colors?.ui || null,
+            icon: hero.images?.icon_image_small_webp || hero.images?.icon_image_small || hero.icon_image_small || ""
+          }))
           .sort((a, b) => a.name.localeCompare(b.name));
 
         if (!heroIndex.length) {
@@ -1523,12 +2160,56 @@
       }
     }
 
+    tabHeroesEl.addEventListener("click", () => {
+      setView("heroes");
+    });
+
+    tabScalingEl.addEventListener("click", async () => {
+      await openScalingView();
+    });
+
+    metricTabsEl.addEventListener("click", async (event) => {
+      const btn = event.target.closest(".metric-btn");
+      if (!btn) return;
+      const metric = btn.dataset.metric;
+      if (!metric || metric === scalingMetric) return;
+      scalingMetric = metric;
+      [...metricTabsEl.querySelectorAll(".metric-btn")].forEach((el) => {
+        el.classList.toggle("active", el === btn);
+      });
+      if (!scalingViewEl.hidden) await renderScalingGraph();
+    });
+
+    scalingHeroTogglesEl.addEventListener("change", async (event) => {
+      const input = event.target.closest("input[data-hero-id]");
+      if (!input) return;
+      const heroId = Number(input.dataset.heroId);
+      if (input.checked) selectedScalingHeroes.add(heroId);
+      else selectedScalingHeroes.delete(heroId);
+      await renderScalingGraph();
+    });
+
+    displayAllBtnEl.addEventListener("click", async () => {
+      selectedScalingHeroes.clear();
+      heroIndex.forEach((hero) => selectedScalingHeroes.add(hero.id));
+      buildScalingToggles();
+      await renderScalingGraph();
+    });
+
+    displayNoneBtnEl.addEventListener("click", async () => {
+      selectedScalingHeroes.clear();
+      buildScalingToggles();
+      await renderScalingGraph();
+    });
+
     levelSliderEl.addEventListener("input", renderCurrentLevel);
 
     loadIconsIndex().then(() => {
       if (currentModel) renderCurrentLevel();
     });
+    setView("heroes");
     loadHeroes();
   </script>
 </body>
 </html>
+
